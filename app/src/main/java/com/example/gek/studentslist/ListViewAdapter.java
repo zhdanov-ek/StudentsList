@@ -8,21 +8,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 /**
- * Кастом адаптер для листвью
+ * Кастом адаптер для ListView
  */
 
-public class MyListViewAdapter extends BaseAdapter {
-    Context ctx;
-    LayoutInflater lInflater;
-    ArrayList<Student> students;
+public class ListViewAdapter extends BaseAdapter {
+    private Context ctx;
+    private LayoutInflater lInflater;
+    private ArrayList<Student> students;
 
     // В конструкторе получаем контекст, данные и инфлейтер
-    MyListViewAdapter(Context context, ArrayList<Student> students){
+    ListViewAdapter(Context context, ArrayList<Student> students){
         ctx = context;
         this.students = students;
         lInflater = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
@@ -61,9 +62,12 @@ public class MyListViewAdapter extends BaseAdapter {
 
         TextView tvName = (TextView) view.findViewById(R.id.tvName);
         tvName.setText(student.getName());
-        tvName.setOnClickListener(new View.OnClickListener() {
+
+        LinearLayout llItem = (LinearLayout) view.findViewById(R.id.llItem);
+        llItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGooglePlus())));
             }
         });

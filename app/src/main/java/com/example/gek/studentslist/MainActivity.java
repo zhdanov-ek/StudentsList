@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    //todo Переделать перед сдачей на апи 17
 
     Button btnListView, btnRecycleView;
 
@@ -31,6 +30,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intentLV = new Intent(this, ListViewActivity.class);
                 startActivity(intentLV);
                 break;
+            case R.id.btnRecycleView:
+                Intent intentRV = new Intent(this, RecyclerViewActivity.class);
+                startActivity(intentRV);
         }
     }
 }
