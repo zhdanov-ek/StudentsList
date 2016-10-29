@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnRecycleView = (Button)findViewById(R.id.btnRecycleView);
         btnRecycleView.setOnClickListener(this);
-
     }
 
     @Override

@@ -1,8 +1,9 @@
-package com.example.gek.studentslist;
-
 /**
  * Класс описывающий студента для удобства работы в списке
  */
+
+package com.example.gek.studentslist;
+
 
 public class Student {
     public String getName() {

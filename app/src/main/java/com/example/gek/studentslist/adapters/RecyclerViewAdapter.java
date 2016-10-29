@@ -1,4 +1,9 @@
+/**
+ *  Кастом адаптер для RecyclerView
+ */
+
 package com.example.gek.studentslist;
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,15 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
-/**
- *  Кастом адаптер для RecyclerView
- */
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>  {
-
     private ArrayList<Student> students;
     private Context ctx;
 
@@ -42,7 +42,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-
     // Создает новые views (элементы списка) (вызывается layout manager-ом)
     @Override
     public RecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -50,7 +49,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
 
         // тут можно программно менять атрибуты лэйаута (size, margins, paddings и др.)
-
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -66,20 +64,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGooglePlus())));
             }
         });
-
         holder.btnGit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGit())));
             }
         });
-
     }
-
 
     @Override
     public int getItemCount() {
         return students.size();
     }
-
 }

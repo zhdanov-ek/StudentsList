@@ -1,10 +1,12 @@
+/**
+ * Класс, который содержит в себе и возвращает данные о студентах
+ */
+
 package com.example.gek.studentslist;
+
 
 import java.util.ArrayList;
 
-/**
- * Created by gek on 27.10.2016.
- */
 
 public class DataStudents {
     private ArrayList<Student>  list;
@@ -31,6 +33,7 @@ public class DataStudents {
         list.add(new Student("Michael Tyoply", "https://github.com/RedGeekPanda", "https://plus.google.com/u/0/110313151428733681846"));
         list.add(new Student("Павел Сакуров", "https://github.com/sakurov/Sunshine", "https://plus.google.com/u/0/108482088578879737406"));
     }
+
     public ArrayList<Student> getListStudents(){
         return list;
     }

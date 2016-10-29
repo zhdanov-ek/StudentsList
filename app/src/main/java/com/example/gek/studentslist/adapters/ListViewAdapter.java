@@ -1,4 +1,9 @@
+/**
+ * Кастом адаптер для ListView
+ */
+
 package com.example.gek.studentslist;
+
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +18,6 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Кастом адаптер для ListView
- */
 
 public class ListViewAdapter extends BaseAdapter {
     private Context ctx;
@@ -28,7 +30,6 @@ public class ListViewAdapter extends BaseAdapter {
         this.students = students;
         lInflater = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
     }
-
 
     // кол-во записей
     @Override
@@ -59,19 +60,15 @@ public class ListViewAdapter extends BaseAdapter {
 
         // получаем данные о студенте и заносим их в созданное выше вью
         final Student student = (Student) getItem(i);
-
         TextView tvName = (TextView) view.findViewById(R.id.tvName);
         tvName.setText(student.getName());
-
         LinearLayout llItem = (LinearLayout) view.findViewById(R.id.llItem);
         llItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGooglePlus())));
             }
         });
-
         Button button = (Button)view.findViewById(R.id.btnGit);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
