@@ -2,7 +2,7 @@
  * Класс, который содержит в себе и возвращает данные о студентах
  */
 
-package com.example.gek.studentslist;
+package com.example.gek.studentslist.data;
 
 
 import java.util.ArrayList;

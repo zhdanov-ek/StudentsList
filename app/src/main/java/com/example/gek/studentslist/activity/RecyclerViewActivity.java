@@ -2,8 +2,11 @@
  * Активити демонстрирующее работу с RecyclerView
  */
 
-package com.example.gek.studentslist;
+package com.example.gek.studentslist.activity;
 
+import com.example.gek.studentslist.data.*;
+import com.example.gek.studentslist.adapters.*;
+import com.example.gek.studentslist.R;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

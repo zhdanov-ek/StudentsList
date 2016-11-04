@@ -2,7 +2,7 @@
  * Класс описывающий студента для удобства работы в списке
  */
 
-package com.example.gek.studentslist;
+package com.example.gek.studentslist.data;
 
 
 public class Student {

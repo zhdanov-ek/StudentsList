@@ -2,8 +2,10 @@
  *  Кастом адаптер для RecyclerView
  */
 
-package com.example.gek.studentslist;
+package com.example.gek.studentslist.adapters;
 
+import com.example.gek.studentslist.data.*;
+import com.example.gek.studentslist.R;
 
 import android.content.Context;
 import android.content.Intent;

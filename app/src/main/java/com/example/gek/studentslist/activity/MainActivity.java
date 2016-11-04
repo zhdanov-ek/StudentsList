@@ -1,4 +1,6 @@
-package com.example.gek.studentslist;
+package com.example.gek.studentslist.activity;
+
+import com.example.gek.studentslist.R;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

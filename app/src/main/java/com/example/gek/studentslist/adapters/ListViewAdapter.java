@@ -2,8 +2,10 @@
  * Кастом адаптер для ListView
  */
 
-package com.example.gek.studentslist;
+package com.example.gek.studentslist.adapters;
 
+import com.example.gek.studentslist.data.*;
+import com.example.gek.studentslist.R;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +27,7 @@ public class ListViewAdapter extends BaseAdapter {
     private ArrayList<Student> students;
 
     // В конструкторе получаем контекст, данные и инфлейтер
-    ListViewAdapter(Context context, ArrayList<Student> students){
+    public ListViewAdapter(Context context, ArrayList<Student> students){
         ctx = context;
         this.students = students;
         lInflater = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
