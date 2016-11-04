@@ -4,6 +4,7 @@
 
 package com.example.gek.studentslist.adapters;
 
+import com.example.gek.studentslist.activity.PersonActivity;
 import com.example.gek.studentslist.data.*;
 import com.example.gek.studentslist.R;
 
@@ -63,13 +64,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.llItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGooglePlus())));
+                Intent intentGooglePlus = new Intent(ctx, PersonActivity.class);
+                intentGooglePlus.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GOOGLE);
+                intentGooglePlus.putExtra(Consts.ID_GOOGLE, student.getIdGoogle());
+                ctx.startActivity(intentGooglePlus);
             }
         });
         holder.btnGit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGit())));
+                Intent intentGit = new Intent(ctx, PersonActivity.class);
+                intentGit.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GIT);
+
+                ctx.startActivity(intentGit);
             }
         });
     }

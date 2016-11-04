@@ -39,4 +39,14 @@ public class Student {
         this.googlePlus = googlePlus;
         this.git = git;
     }
+
+    // return last 21 char - user id in Google+
+    // https://plus.google.com/u/0/108482088578879737406
+    public String getIdGoogle(){
+        String idGoogle = googlePlus.subSequence(
+                googlePlus.length()-21,
+                googlePlus.length())
+                .toString();
+        return idGoogle;
+    }
 }

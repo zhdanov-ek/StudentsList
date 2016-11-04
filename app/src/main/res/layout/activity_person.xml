@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llPersonBack"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/person_frame"
+    android:background="@color/colorGoogle"
+    tools:context="com.example.gek.studentslist.activity.PersonActivity">
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="@dimen/logo_server_size"
+        android:layout_height="@dimen/logo_server_size"
+        tools:src="@drawable/logo_google"
+        android:layout_margin="10dp"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBase"
+
+        android:gravity="center_horizontal|center_vertical">
+
+
+        <ImageView
+            android:id="@+id/ivAva"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Name"
+            android:textSize="@dimen/text_size_middle"
+            android:gravity="center_horizontal"/>
+
+        <TextView
+            android:id="@+id/tvUrlProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="url of profile on a server"
+            android:gravity="center_horizontal"/>
+
+
+        <TextView
+            android:id="@+id/tvUrlImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="url of image"
+            android:gravity="center_horizontal"/>
+
+
+        <TextView
+            android:id="@+id/tvAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="All info in one (debugging)"
+            android:gravity="center_horizontal"/>
+
+        <Button
+            android:id="@+id/btnMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/more_info"
+            android:enabled="false"/>
+    </LinearLayout>
+
+</LinearLayout>
