@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.gek.studentslist.BuildConfig;
@@ -34,6 +35,7 @@ import java.io.InputStreamReader;
 
 
 public class PersonActivity extends AppCompatActivity {
+    ProgressBar progressBar;
     TextView tvName;
     TextView tvUrlProfile;
     TextView tvOther;
@@ -50,6 +52,7 @@ public class PersonActivity extends AppCompatActivity {
         setContentView(R.layout.activity_person);
         ctx = this;
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         tvName = (TextView) findViewById(R.id.tvName);
         tvUrlProfile = (TextView) findViewById(R.id.tvUrlProfile);
         tvOther = (TextView) findViewById(R.id.tvOther);
@@ -234,6 +237,7 @@ public class PersonActivity extends AppCompatActivity {
         public ImageLoadTask(String url, ImageView imageView) {
             this.url = url;
             this.imageView = imageView;
+            progressBar.setVisibility(View.INVISIBLE);
         }
 
         @Override
