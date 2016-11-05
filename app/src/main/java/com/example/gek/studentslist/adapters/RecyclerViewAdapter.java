@@ -75,7 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             public void onClick(View v) {
                 Intent intentGit = new Intent(ctx, PersonActivity.class);
                 intentGit.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GIT);
-
+                intentGit.putExtra(Consts.ID_GIT, student.getIdGit());
                 ctx.startActivity(intentGit);
             }
         });

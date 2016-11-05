@@ -1,5 +1,6 @@
 package com.example.gek.studentslist.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -70,50 +71,75 @@ public class PersonActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent.getIntExtra(Consts.TYPE_CARD, 0) == Consts.TYPE_CARD_GOOGLE){
 
-            // Формируем карточку с гугл +
+            // Формируем карточку с гугл
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_google));
-            new LoadInfoGoogle().execute(intent.getStringExtra(Consts.ID_GOOGLE));
+            new LoadInfoFromServer()
+                    .execute(intent.getStringExtra(Consts.ID_GOOGLE),
+                            Integer.toString(Consts.TYPE_CARD_GOOGLE));
         } else {
 
             // Формируем карточку с ГИТ
             llPersonBack.setBackgroundColor(getResources().getColor(R.color.colorGit));
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_git));
+            new LoadInfoFromServer()
+                    .execute(intent.getStringExtra(Consts.ID_GIT),
+                            Integer.toString(Consts.TYPE_CARD_GIT));
         }
 
     }
 
 
-    /** Загружает с инфу с учетки Google Plus */
-     private class LoadInfoGoogle extends AsyncTask<String, Integer, String[]>{
+    /** Загружает с инфу с Google Plus или GIT
+     * Параметры на вход таску:
+     * 1. ID account Google or GIT
+     * 2. Сервер: TYPE_CARD_GOOGLE or TYPE_CARD_GIT
+     * */
+     private class LoadInfoFromServer extends AsyncTask<String, Integer, ContentValues>{
         private final String LOG_TAG = "MyLog LoadInfoGoogle: ";
 
         @Override
-        protected String[] doInBackground(String... params) {
-            final String BASE_URL = "https://www.googleapis.com/plus/v1/people/";
-
-            // указываем поля, которые хотим получить. Без указания получим все
-            final String FIELDS_GOOGLE = "image,name,organizations,url,urls";
-            final String KEY_GOOGLE = BuildConfig.GOOGLE_API_KEY;
+        protected ContentValues doInBackground(String... params) {
             String idUser = params[0];
+            int typeCard = Integer.parseInt(params[1]);
+            ContentValues result = null;
 
-            Uri uri = Uri.parse(BASE_URL + idUser).buildUpon()
-                    .appendQueryParameter("fields", FIELDS_GOOGLE)
-                    .appendQueryParameter("key", KEY_GOOGLE)
-                    .build();
+            switch (typeCard){
+                case Consts.TYPE_CARD_GOOGLE:
+                    // указываем поля, которые хотим получить. Без указания получим все
+                    final String FIELDS_GOOGLE = "image,name,organizations,url,urls";
+                    final String KEY_GOOGLE = BuildConfig.GOOGLE_API_KEY;
+                    Uri uriGoogle = Uri.parse(Consts.URL_GOOGLE_BASE + idUser).buildUpon()
+                            .appendQueryParameter("fields", FIELDS_GOOGLE)
+                            .appendQueryParameter("key", KEY_GOOGLE)
+                            .build();
 
-            // Загружаем инфу с сервера, а результат сразу парсим формируя массив значений
-            return parseJsonGoogle(loadJsonFromServer(uri));
-        }
+                    // Загружаем инфу с сервера, а результат сразу парсим формируя ContentValues
+                    result = parseJsonGoogle(loadJsonFromServer(uriGoogle));
+                    break;
+
+                case Consts.TYPE_CARD_GIT:
+                    Uri uriGit = Uri.parse(Consts.URL_GIT_BASE + idUser).buildUpon()
+                            .build();
+                    // Загружаем инфу с сервера, а результат сразу парсим формируя ContentValues
+                    result = parseJsonGit(loadJsonFromServer(uriGit));
+                    break;
+
+                default:
+                    break;
+                }
+            return  result;
+            }
 
 
         @Override
-        protected void onPostExecute(String[] result) {
-            ImageLoadTask  loadImageTask = new ImageLoadTask(result[2], ivAva);
+        protected void onPostExecute(ContentValues cv) {
+            ImageLoadTask  loadImageTask =
+                    new ImageLoadTask(cv.getAsString(Consts.FIELD_URL_IMAGE), ivAva);
             loadImageTask.execute();
 
-            tvName.setText(result[0]);
-            tvUrlProfile.setText(result[1]);
-            tvUrlImage.setText(result[2]);
+            tvName.setText(cv.getAsString(Consts.FIELD_NAME));
+            tvUrlProfile.setText(cv.getAsString(Consts.FIELD_URL_PROFILE));
+            tvUrlImage.setText(cv.getAsString(Consts.FIELD_URL_IMAGE));
             btnMore.setEnabled(true);
 
         }
@@ -149,19 +175,44 @@ public class PersonActivity extends AppCompatActivity {
         }
 
         // Парсим ответ с гугла
-        private String[] parseJsonGoogle(String jsonStr){
+        private ContentValues parseJsonGoogle(String jsonStr){
             try {
+                ContentValues cv =  new ContentValues();
                 JSONObject jsonMain = new JSONObject(jsonStr);
-                String urlGoogleProfile = jsonMain.getString("url");
-                String urlImage = jsonMain.getJSONObject("image").getString("url");
-                // В линке на картинку меняем параметр отвечающий за размер
-                urlImage = urlImage.replace("sz=50", "sz=350");
-                String name = jsonMain.getJSONObject("name").getString("givenName");
+
+                // В гугле имя и фамилия в разных полях. Сначала их собераем в единое
+                String givenName = jsonMain.getJSONObject("name").getString("givenName");
                 String familyName = jsonMain.getJSONObject("name").getString("familyName");
-                return new String[]{familyName + " " + name, urlGoogleProfile, urlImage};
+                cv.put(Consts.FIELD_NAME, familyName + " " + givenName);
+
+                cv.put(Consts.FIELD_URL_PROFILE, jsonMain.getString("url"));
+
+                // В линке на картинку меняем параметр отвечающий за размер
+                String urlImage = jsonMain.getJSONObject("image").getString("url");
+                urlImage = urlImage.replace("sz=50", "sz=500");
+                cv.put(Consts.FIELD_URL_IMAGE, urlImage);
+                return cv;
+
             } catch (JSONException e){
                 Log.e(LOG_TAG, "parseJsonGoogle()", e);
-                return new String[]{"Error" + e};
+                return null;
+            }
+
+        }
+
+        // Парсим ответ с гита
+        private ContentValues parseJsonGit(String jsonStr){
+            try {
+                JSONObject jsonMain = new JSONObject(jsonStr);
+                ContentValues cv = new ContentValues();
+                cv.put(Consts.FIELD_URL_PROFILE, jsonMain.getString("html_url"));
+                cv.put(Consts.FIELD_URL_IMAGE, jsonMain.getString("avatar_url"));
+                cv.put(Consts.FIELD_NAME, jsonMain.getString("name"));
+                cv.put(Consts.FIELD_GIT_REPOS, jsonMain.getString("public_repos"));
+                return cv;
+            } catch (JSONException e){
+                Log.e(LOG_TAG, "parseJsonGit()", e);
+                return null;
             }
 
         }

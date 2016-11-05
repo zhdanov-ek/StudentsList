@@ -49,4 +49,8 @@ public class Student {
                 .toString();
         return idGoogle;
     }
+
+    public String getIdGit(){
+        return git.substring(19);
+    }
 }
