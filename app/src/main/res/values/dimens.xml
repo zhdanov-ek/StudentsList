@@ -4,10 +4,20 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="button_width">150dp</dimen>
+
+
     <dimen name="person_frame">90dp</dimen>
     <dimen name="logo_server_size">70dp</dimen>
     <!-- (person_frame - logo_server_size)/2 -->
     <dimen name="logo_layout_margin">10dp</dimen>
 
+    <dimen name="ava_size">200dp</dimen>
+
     <dimen name="text_size_middle">20dp</dimen>
+    <dimen name="text_size_big">40dp</dimen>
+
+    <!-- Button MORE -->
+    <dimen name="button_more_height">30dp</dimen>
+    <dimen name="button_more_width">200dp</dimen>
 </resources>

@@ -1,6 +1,6 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Base application theme.  -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -8,13 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+
+    <style name="ButtonGit" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/bg_button_git</item>
+        <item name="android:textColor">@color/colorGit</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">5dp</item>
+
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="ButtonGoogle" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/bg_button_google</item>
+        <item name="android:textColor">@color/colorGoogle</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">5dp</item>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    </style>
+
 
 </resources>

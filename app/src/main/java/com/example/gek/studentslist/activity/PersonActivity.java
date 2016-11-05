@@ -36,8 +36,7 @@ import java.io.InputStreamReader;
 public class PersonActivity extends AppCompatActivity {
     TextView tvName;
     TextView tvUrlProfile;
-    TextView tvUrlImage;
-    TextView tvAll;
+    TextView tvOther;
     ImageView ivAva;
     LinearLayout llPersonBack;
     ImageView ivLogo;
@@ -53,8 +52,7 @@ public class PersonActivity extends AppCompatActivity {
 
         tvName = (TextView) findViewById(R.id.tvName);
         tvUrlProfile = (TextView) findViewById(R.id.tvUrlProfile);
-        tvUrlImage = (TextView) findViewById(R.id.tvUrlImage);
-        tvAll = (TextView) findViewById(R.id.tvAll);
+        tvOther = (TextView) findViewById(R.id.tvOther);
         ivAva = (ImageView) findViewById(R.id.ivAva);
         llPersonBack = (LinearLayout) findViewById(R.id.llPersonBack);
         ivLogo = (ImageView) findViewById(R.id.ivLogo);
@@ -80,6 +78,8 @@ public class PersonActivity extends AppCompatActivity {
 
             // Формируем карточку с ГИТ
             llPersonBack.setBackgroundColor(getResources().getColor(R.color.colorGit));
+            btnMore.setBackground(getResources().getDrawable(R.drawable.bg_button_git));
+            btnMore.setTextColor(getResources().getColor(R.color.colorGit));
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_git));
             new LoadInfoFromServer()
                     .execute(intent.getStringExtra(Consts.ID_GIT),
@@ -133,17 +133,20 @@ public class PersonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ContentValues cv) {
+            // Сразу начинаем грузить в таске нашу картинку и заполняем поля значениями
             ImageLoadTask  loadImageTask =
                     new ImageLoadTask(cv.getAsString(Consts.FIELD_URL_IMAGE), ivAva);
             loadImageTask.execute();
-
             tvName.setText(cv.getAsString(Consts.FIELD_NAME));
             tvUrlProfile.setText(cv.getAsString(Consts.FIELD_URL_PROFILE));
-            tvUrlImage.setText(cv.getAsString(Consts.FIELD_URL_IMAGE));
+
+            if (cv.containsKey(Consts.FIELD_GIT_REPOS)) {
+                tvOther.setText(getString(R.string.have_repositories_on_git) +
+                        " " + cv.getAsString(Consts.FIELD_GIT_REPOS));
+            }
+
             btnMore.setEnabled(true);
-
         }
-
 
         // Делам запрос на какой либо сервер и возвращаем ответ в виде строки
         private String loadJsonFromServer(Uri uri) {
@@ -207,7 +210,11 @@ public class PersonActivity extends AppCompatActivity {
                 ContentValues cv = new ContentValues();
                 cv.put(Consts.FIELD_URL_PROFILE, jsonMain.getString("html_url"));
                 cv.put(Consts.FIELD_URL_IMAGE, jsonMain.getString("avatar_url"));
-                cv.put(Consts.FIELD_NAME, jsonMain.getString("name"));
+                String name = jsonMain.getString("name");
+                if (name.equals("null")) {
+                    name = jsonMain.getString("login");
+                }
+                cv.put(Consts.FIELD_NAME, name);
                 cv.put(Consts.FIELD_GIT_REPOS, jsonMain.getString("public_repos"));
                 return cv;
             } catch (JSONException e){
@@ -222,10 +229,8 @@ public class PersonActivity extends AppCompatActivity {
     /** Подгружает в фоне картинку в ImageView
      * /todo Надо вынести в отдельный файл */
     private class ImageLoadTask extends AsyncTask<Void, Void, Bitmap> {
-
         private String url;
         private ImageView imageView;
-
         public ImageLoadTask(String url, ImageView imageView) {
             this.url = url;
             this.imageView = imageView;

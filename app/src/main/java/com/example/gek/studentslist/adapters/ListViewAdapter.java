@@ -4,6 +4,7 @@
 
 package com.example.gek.studentslist.adapters;
 
+import com.example.gek.studentslist.activity.PersonActivity;
 import com.example.gek.studentslist.data.*;
 import com.example.gek.studentslist.R;
 
@@ -68,14 +69,20 @@ public class ListViewAdapter extends BaseAdapter {
         llItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGooglePlus())));
+                Intent intentGooglePlus = new Intent(ctx, PersonActivity.class);
+                intentGooglePlus.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GOOGLE);
+                intentGooglePlus.putExtra(Consts.ID_GOOGLE, student.getIdGoogle());
+                ctx.startActivity(intentGooglePlus);
             }
         });
         Button button = (Button)view.findViewById(R.id.btnGit);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ctx.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(student.getGit())));
+                Intent intentGit = new Intent(ctx, PersonActivity.class);
+                intentGit.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GIT);
+                intentGit.putExtra(Consts.ID_GIT, student.getIdGit());
+                ctx.startActivity(intentGit);
             }
         });
         return view;

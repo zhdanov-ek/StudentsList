@@ -31,7 +31,7 @@ public class DataStudents {
         list.add(new Student("Вова Лымарь", "https://github.com/VovanNec", "https://plus.google.com/u/0/109227554979939957830"));
         list.add(new Student("Даша Кириченко", "https://github.com/dashakdsr", "https://plus.google.com/u/0/103130382244571139113"));
         list.add(new Student("Michael Tyoply", "https://github.com/RedGeekPanda", "https://plus.google.com/u/0/110313151428733681846"));
-        list.add(new Student("Павел Сакуров", "https://github.com/sakurov/Sunshine", "https://plus.google.com/u/0/108482088578879737406"));
+        list.add(new Student("Павел Сакуров", "https://github.com/sakurov", "https://plus.google.com/u/0/108482088578879737406"));
     }
 
     public ArrayList<Student> getListStudents(){

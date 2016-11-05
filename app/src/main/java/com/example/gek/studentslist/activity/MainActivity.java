@@ -2,11 +2,15 @@ package com.example.gek.studentslist.activity;
 
 import com.example.gek.studentslist.R;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -26,6 +30,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        if (!isOnline()) {
+            Toast.makeText(this, getResources().getString(R.string.no_internet),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         switch (view.getId()){
             case R.id.btnListView:
                 Intent intentLV = new Intent(this, ListViewActivity.class);
@@ -34,6 +43,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.btnRecycleView:
                 Intent intentRV = new Intent(this, RecyclerViewActivity.class);
                 startActivity(intentRV);
+        }
+    }
+
+    /** Проверяем есть ли интернет */
+    public boolean isOnline() {
+        // Обращаемся к сервису, который отвечает за соединение с интернетом
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cm.getActiveNetworkInfo();
+        if (nInfo != null && nInfo.isConnected()) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 }

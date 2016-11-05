@@ -6,6 +6,10 @@
     <color name="blue">#3F51B5</color>
 
     <color name="colorGoogle">#c53929</color>
+    <color name="colorGoogleDark">#831206</color>
+    <color name="colorGoogleLight">#da837a</color>
     <color name="colorGit">#5e5e5e</color>
+    <color name="colorGitDark">#403f3f</color>
+    <color name="colorGitLight">#c7c5c5</color>
     <color name="colorBase">#FFFFFF</color>
 </resources>
