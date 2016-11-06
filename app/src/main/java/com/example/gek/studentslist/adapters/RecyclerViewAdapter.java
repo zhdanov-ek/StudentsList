@@ -31,17 +31,45 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.students = students;
     }
 
-    // Реализация абстрактного класса ViewHolder, хранящего ссылки на виджеты.
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    /** Реализация абстрактного класса ViewHolder, хранящего ссылки на виджеты.
+    / Он же реализует функцию OnClickListener, что бы не создавать их на каждое поле
+    / при прокрутке в onBindViewHolder. Максимум таких холдеров будет на два больше
+    / чем вмещается на экране */
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView tvName;
         private Button btnGit;
         private LinearLayout llItem;
+
 
         public ViewHolder(View itemView){
             super(itemView);
             tvName = (TextView) itemView.findViewById(R.id.tvName);
             btnGit = (Button) itemView.findViewById(R.id.btnGit);
+            btnGit.setOnClickListener(this);
             llItem = (LinearLayout) itemView.findViewById(R.id.llItem);
+            llItem.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // изымаем данные нашего студента по позиции где был клик
+            Student student = students.get(getAdapterPosition());
+            switch (v.getId()){
+                case R.id.llItem:
+                    Intent intentGooglePlus = new Intent(ctx, PersonActivity.class);
+                    intentGooglePlus.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GOOGLE);
+                    intentGooglePlus.putExtra(Consts.ID_GOOGLE, student.getIdGoogle());
+                    ctx.startActivity(intentGooglePlus);
+                    break;
+                case R.id.btnGit:
+                    Intent intentGit = new Intent(ctx, PersonActivity.class);
+                    intentGit.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GIT);
+                    intentGit.putExtra(Consts.ID_GIT, student.getIdGit());
+                    ctx.startActivity(intentGit);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -61,24 +89,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Student student = students.get(position);
         holder.tvName.setText(student.getName());
-        holder.llItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentGooglePlus = new Intent(ctx, PersonActivity.class);
-                intentGooglePlus.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GOOGLE);
-                intentGooglePlus.putExtra(Consts.ID_GOOGLE, student.getIdGoogle());
-                ctx.startActivity(intentGooglePlus);
-            }
-        });
-        holder.btnGit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentGit = new Intent(ctx, PersonActivity.class);
-                intentGit.putExtra(Consts.TYPE_CARD, Consts.TYPE_CARD_GIT);
-                intentGit.putExtra(Consts.ID_GIT, student.getIdGit());
-                ctx.startActivity(intentGit);
-            }
-        });
     }
 
     @Override

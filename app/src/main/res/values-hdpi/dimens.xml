@@ -1,3 +1,6 @@
+<!--    values-hdpi             4.0” 480x800 hdpi
+        values-hdpi             3.7” 480x854 hdpi   -->
+
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
@@ -7,10 +10,10 @@
     <dimen name="button_width">150dp</dimen>
 
 
-    <dimen name="person_frame">90dp</dimen>
-    <dimen name="logo_server_size">70dp</dimen>
+    <dimen name="person_frame">50dp</dimen>
+    <dimen name="logo_server_size">40dp</dimen>
     <!-- (person_frame - logo_server_size)/2 -->
-    <dimen name="logo_layout_margin">10dp</dimen>
+    <dimen name="logo_layout_margin">5dp</dimen>
 
     <dimen name="ava_size">150dp</dimen>
 
