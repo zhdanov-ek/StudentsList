@@ -63,48 +63,43 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
     }
 
 
+    /** Intent с сылкой на фото в галерее возвращают оба наших интента, по этому
+     * обработка одинаковая и сводиться к тому, что нужно извлечь путь к файлу и подать
+     * его в метод загрузки картинки в ImageView
+    / */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_LOAD_IMG:
-                try {
-                    // Если картинку выбрали и данне есть то грузим ее
-                    if (resultCode == RESULT_OK && data != null ) {
 
-                        // Получаем URI выбранного файла с интента data
-                        Uri selectedImage = data.getData();
-                        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        if (resultCode == RESULT_OK && data != null ) {
+            String operation = "";
+            if (requestCode == REQUEST_LOAD_IMG ) {
+                operation = "Картинка загружена с галереи";
+            } else if (requestCode == REQUEST_MAKE_PHOTO ) {
+                operation = "Картинка загружена с камеры";
+            }
+            try {
+                // Получаем URI  файла с интента data
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-                        // Get the cursor
-                        Cursor cursor = getContentResolver().query(selectedImage,
-                                filePathColumn, null, null, null);
+                // Получаем курсор
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
 
-                        // Move to first row
-                        cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        // Получаем абсолютный путь к файлу
-                        String imgDecodableString = cursor.getString(columnIndex);
-                        cursor.close();
+                // Получаем абсолютный путь к файлу
+                String imgDecodableString = cursor.getString(columnIndex);
+                cursor.close();
 
-                        // Загрузка киртинки
-                        ivLoadImage.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
-
-                    } else {
-                        Toast.makeText(this, "You haven't picked Image",
-                                Toast.LENGTH_LONG).show();
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-                break;
-            case REQUEST_MAKE_PHOTO:
-                if (resultCode == RESULT_OK && data != null){
-                    Toast.makeText(this, "I receive photo", Toast.LENGTH_LONG).show();
-                }
-                break;
-
+                // Загрузка киртинки
+                ivLoadImage.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
+                Toast.makeText(this, operation, Toast.LENGTH_LONG).show();
+            } catch (Exception e){
+                Toast.makeText(this, "Error " + e.toString(), Toast.LENGTH_LONG).show();
+            }
         }
 
     }
