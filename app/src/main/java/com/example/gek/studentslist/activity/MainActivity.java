@@ -1,9 +1,12 @@
 package com.example.gek.studentslist.activity;
 
 import com.example.gek.studentslist.R;
+import com.example.gek.studentslist.receivers.AudioReceiver;
+import com.example.gek.studentslist.receivers.BluetoothReceiver;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +17,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button btnListView, btnRecycleView;
+    Button btnListView, btnRecycleView, btnReceivers;
+    AudioReceiver mAudioReceiver;
+    BluetoothReceiver mBluetoothReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,23 +31,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnRecycleView = (Button)findViewById(R.id.btnRecycleView);
         btnRecycleView.setOnClickListener(this);
+
+        btnReceivers = (Button)findViewById(R.id.btnReceivers);
+        btnReceivers.setOnClickListener(this);
+
+        mAudioReceiver = new AudioReceiver();
+        mBluetoothReceiver = new BluetoothReceiver();
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        registerReceiver(mAudioReceiver, filter);
+
+        IntentFilter filterB = new IntentFilter("android.bluetooth.adapter.action.STATE_CHANGED");
+        registerReceiver(mBluetoothReceiver, filterB);
     }
 
     @Override
     public void onClick(View view) {
-        if (!isOnline()) {
-            Toast.makeText(this, getResources().getString(R.string.no_internet),
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
+
         switch (view.getId()){
             case R.id.btnListView:
+                if (!isOnline()) {
+                    Toast.makeText(this, getResources().getString(R.string.no_internet),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent intentLV = new Intent(this, ListViewActivity.class);
                 startActivity(intentLV);
                 break;
             case R.id.btnRecycleView:
+                if (!isOnline()) {
+                    Toast.makeText(this, getResources().getString(R.string.no_internet),
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Intent intentRV = new Intent(this, RecyclerViewActivity.class);
                 startActivity(intentRV);
+                break;
+            case R.id.btnReceivers:
+                Intent intentRsv = new Intent(this, ReceiversActivity.class);
+                startActivity(intentRsv);
         }
     }
 
