@@ -6,6 +6,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Камера нужна в программе но не критично, т.е. установить app можно будет
+    В коде программы наличие камеры можно проверить с помощью
+    hasSystemFeature(PackageManager.FEATURE_CAMERA)
+    и только после этого включать возможности работы с ней -->
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
 
     <application
