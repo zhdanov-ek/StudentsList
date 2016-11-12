@@ -50,14 +50,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:visibility="invisible"
+            android:visibility="gone"
             tools:text="url of profile on a server" />
 
         <TextView
             android:id="@+id/tvOther"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:gravity="center_horizontal|center_vertical"
             android:textSize="@dimen/text_size_middle"
             tools:text="Other info" />
 

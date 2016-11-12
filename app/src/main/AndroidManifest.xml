@@ -35,12 +35,30 @@
         <activity
             android:name=".activity.PersonActivity"
             android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <!-- Указанаие категории BROWSABLE включит активити в список апп обрабатывающие
+                 ссылки в браузера, почте и т.д.  -->
+                <category android:name="android.intent.category.BROWSABLE"/>
 
+                <!-- Указываем какие именно ссылки (протоколы) мы будем открывать -->
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+
+                <!-- Ограничиваем ссылки еще и по хостам -->
+                <data android:host="github.com"/>
+                <data android:host="plus.google.com"/>
+
+                <!-- Расширяем маской адреса. Теперь откроются все начиная с того, что указанно
+                 выше. Правя часть может быть произвольной -->
+                <data android:pathPattern="/.*"/>
+            </intent-filter>
         </activity>
+
         <activity
             android:name=".activity.ReceiversActivity"
-            android:screenOrientation="portraitgi">
-
+            android:screenOrientation="portrait">
         </activity>
 
         <receiver

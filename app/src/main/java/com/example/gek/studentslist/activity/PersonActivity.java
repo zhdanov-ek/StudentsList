@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gek.studentslist.BuildConfig;
 import com.example.gek.studentslist.R;
@@ -32,7 +33,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-
+/**
+ * Класс принимающий на вход URL профиля пользователя на github.com или plus.google.com
+ * Класс делает запрос на указанные сервера и изымает данные о пользователях с серверов
+ * после чего выводит их в нужной форме в своем активити.
+ *
+ * Работает в двух режимах:
+ * 1) Явным интеном с других активити этой программы
+ * 2) Не явными интентами с других программ (интент фильтр в манифесте)
+ *
+ * */
 
 public class PersonActivity extends AppCompatActivity {
     ProgressBar progressBar;
@@ -59,27 +69,45 @@ public class PersonActivity extends AppCompatActivity {
         ivAva = (ImageView) findViewById(R.id.ivAva);
         llPersonBack = (LinearLayout) findViewById(R.id.llPersonBack);
         ivLogo = (ImageView) findViewById(R.id.ivLogo);
+
         btnMore = (Button) findViewById(R.id.btnMore);
         btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ctx.startActivity(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(tvUrlProfile.getText().toString())));
+
+                // Для отображения инфы в браузере после клика на кнопку нужен шузер ибо
+                // может снова запускаться наша программа если ее выберут как основную до этого
+                Intent intentMore = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse(tvUrlProfile.getText().toString()));
+                Intent chooser = Intent.createChooser(intentMore,
+                        getResources().getString(R.string.chooser_title));
+                if (intentMore.resolveActivity(getPackageManager()) != null) {
+                    ctx.startActivity(chooser);
+                } else {
+                    Toast.makeText(ctx, "Program for open link did't found in system.",
+                            Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
-        // Смотрим входящий интент и запрашиваем информацию с нужного источника
         Intent intent = getIntent();
-        if (intent.getIntExtra(Consts.TYPE_CARD, 0) == Consts.TYPE_CARD_GOOGLE){
 
-            // Формируем карточку с гугл
+        // Пытаемся получить параметр по которому определим как сформирован интент:
+        // если он есть то значение будет 1 или 2 и это явные интенты с нашей же программы
+        // если параметра нет то значение присвоится 0 и это будет неявный интент из вне
+        int typeCard = intent.getIntExtra(Consts.TYPE_CARD, 0);
+
+        // Явный интент с нашего активити с указанием карточки в Google Plus
+        if ( typeCard == Consts.TYPE_CARD_GOOGLE){
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_google));
             new LoadInfoFromServer()
                     .execute(intent.getStringExtra(Consts.ID_GOOGLE),
                             Integer.toString(Consts.TYPE_CARD_GOOGLE));
-        } else {
+        }
 
-            // Формируем карточку с ГИТ
+        // Явный интент с нашего активити с указанием карточки в GitHub
+        if (typeCard == Consts.TYPE_CARD_GIT){
             llPersonBack.setBackgroundColor(getResources().getColor(R.color.colorGit));
             btnMore.setBackground(getResources().getDrawable(R.drawable.bg_button_git));
             btnMore.setTextColor(getResources().getColor(R.color.colorGit));
@@ -89,10 +117,44 @@ public class PersonActivity extends AppCompatActivity {
                             Integer.toString(Consts.TYPE_CARD_GIT));
         }
 
+        // Интент с другой программы. Изымаем URL, парсим его и пытаемся получить инфу
+        if (typeCard == 0) {
+            // Изымаем переменную, которая хранит в себе данные по интенту
+            Uri data = getIntent().getData();
+
+            // В нашем случае это полный URL путь типа: https://github.com/zhdanov-ek
+            String fullPath = data.toString();
+
+            // Возвращает имя хоста: plus.google.com или github.com
+            String host = data.getHost();
+
+            // Смотрим на хост и обрабатывем ссылку соответствующим образом
+            if (host.contentEquals(Consts.URL_GOOGLE_HOST)) {
+                String idUserGoogle = data.getLastPathSegment();
+                new LoadInfoFromServer()
+                        .execute(idUserGoogle,
+                                Integer.toString(Consts.TYPE_CARD_GOOGLE));
+            }
+
+            if (host.contentEquals(Consts.URL_GIT_HOST)) {
+                llPersonBack.setBackgroundColor(getResources().getColor(R.color.colorGit));
+                btnMore.setBackground(getResources().getDrawable(R.drawable.bg_button_git));
+                btnMore.setTextColor(getResources().getColor(R.color.colorGit));
+                ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_git));
+
+                // Изымаем из URL последнюю часть где указан юзер и подаем это значение дальше
+                String idUserGit = data.getLastPathSegment();
+
+                new LoadInfoFromServer()
+                        .execute(idUserGit,
+                                Integer.toString(Consts.TYPE_CARD_GIT));
+            }
+        }
+
     }
 
 
-    /** Загружает с инфу с Google Plus или GIT
+    /** Загружает инфу с Google Plus или GIT
      * Параметры на вход таску:
      * 1. ID account Google or GIT
      * 2. Сервер: TYPE_CARD_GOOGLE or TYPE_CARD_GIT
@@ -116,15 +178,34 @@ public class PersonActivity extends AppCompatActivity {
                             .appendQueryParameter("key", KEY_GOOGLE)
                             .build();
 
-                    // Загружаем инфу с сервера, а результат сразу парсим формируя ContentValues
-                    result = parseJsonGoogle(loadJsonFromServer(uriGoogle));
+                    // Загружаем инфу с сервера, а результат парсим формируя ContentValues
+                    // Если данные есть то парсим их, иначе возвращаем выше ошибку
+                    String jsonGoogle = loadJsonFromServer(uriGoogle);
+                    if (jsonGoogle != null) {
+                        result = parseJsonGoogle(jsonGoogle);
+                    } else {
+                        ContentValues cvError = new ContentValues();
+                        cvError.put(Consts.FIELD_RESULT_STATUS,
+                                getResources().getString(R.string.error_in_link));
+                        result = cvError;
+                    }
                     break;
 
                 case Consts.TYPE_CARD_GIT:
                     Uri uriGit = Uri.parse(Consts.URL_GIT_BASE + idUser).buildUpon()
                             .build();
-                    // Загружаем инфу с сервера, а результат сразу парсим формируя ContentValues
-                    result = parseJsonGit(loadJsonFromServer(uriGit));
+
+                    // Загружаем инфу с сервера, а результат парсим формируя ContentValues
+                    // Если данные есть то парсим их, иначе возвращаем выше ошибку
+                    String jsonGit = loadJsonFromServer(uriGit);
+                    if (jsonGit != null) {
+                        result = parseJsonGit(jsonGit);
+                    } else {
+                        ContentValues cvError = new ContentValues();
+                        cvError.put(Consts.FIELD_RESULT_STATUS,
+                                getResources().getString(R.string.error_in_link));
+                        result = cvError;
+                    }
                     break;
 
                 default:
@@ -136,19 +217,32 @@ public class PersonActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ContentValues cv) {
-            // Сразу начинаем грузить в таске нашу картинку и заполняем поля значениями
-            ImageLoadTask  loadImageTask =
-                    new ImageLoadTask(cv.getAsString(Consts.FIELD_URL_IMAGE), ivAva);
-            loadImageTask.execute();
-            tvName.setText(cv.getAsString(Consts.FIELD_NAME));
-            tvUrlProfile.setText(cv.getAsString(Consts.FIELD_URL_PROFILE));
+            // Проверяем чем закончилась загрузка данных с сервера
+            if (cv.containsKey(Consts.FIELD_RESULT_STATUS) &&
+                    cv.getAsString(Consts.FIELD_RESULT_STATUS)
+                            .contentEquals(Consts.RESULT_STATUS_PARSING_OK)) {
+                // Сразу начинаем грузить в таске нашу картинку и заполняем поля значениями
+                ImageLoadTask  loadImageTask =
+                        new ImageLoadTask(cv.getAsString(Consts.FIELD_URL_IMAGE), ivAva);
+                loadImageTask.execute();
+                tvName.setText(cv.getAsString(Consts.FIELD_NAME));
+                tvUrlProfile.setText(cv.getAsString(Consts.FIELD_URL_PROFILE));
+                tvUrlProfile.setVisibility(View.GONE);
 
-            if (cv.containsKey(Consts.FIELD_GIT_REPOS)) {
-                tvOther.setText(getString(R.string.have_repositories_on_git) +
-                        " " + cv.getAsString(Consts.FIELD_GIT_REPOS));
+                if (cv.containsKey(Consts.FIELD_GIT_REPOS)) {
+                    tvOther.setText(getString(R.string.have_repositories_on_git) +
+                            " " + cv.getAsString(Consts.FIELD_GIT_REPOS));
+                }
+                btnMore.setEnabled(true);
+
+            } else {
+                btnMore.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                ivAva.setVisibility(View.GONE);
+                tvOther.setText(R.string.error_in_link);
             }
 
-            btnMore.setEnabled(true);
+
         }
 
         // Делам запрос на какой либо сервер и возвращаем ответ в виде строки
@@ -190,13 +284,13 @@ public class PersonActivity extends AppCompatActivity {
                 String givenName = jsonMain.getJSONObject("name").getString("givenName");
                 String familyName = jsonMain.getJSONObject("name").getString("familyName");
                 cv.put(Consts.FIELD_NAME, familyName + " " + givenName);
-
                 cv.put(Consts.FIELD_URL_PROFILE, jsonMain.getString("url"));
 
                 // В линке на картинку меняем параметр отвечающий за размер
                 String urlImage = jsonMain.getJSONObject("image").getString("url");
                 urlImage = urlImage.replace("sz=50", "sz=500");
                 cv.put(Consts.FIELD_URL_IMAGE, urlImage);
+                cv.put(Consts.FIELD_RESULT_STATUS, Consts.RESULT_STATUS_PARSING_OK);
                 return cv;
 
             } catch (JSONException e){
@@ -219,6 +313,7 @@ public class PersonActivity extends AppCompatActivity {
                 }
                 cv.put(Consts.FIELD_NAME, name);
                 cv.put(Consts.FIELD_GIT_REPOS, jsonMain.getString("public_repos"));
+                cv.put(Consts.FIELD_RESULT_STATUS, Consts.RESULT_STATUS_PARSING_OK);
                 return cv;
             } catch (JSONException e){
                 Log.e(LOG_TAG, "parseJsonGit()", e);

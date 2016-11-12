@@ -6,9 +6,12 @@
     <string name="button_git">GIT</string>
     <string name="title_activity_person_google_plus">PersonGooglePlusActivity</string>
 
+    <string name="error_in_link">No data from server.\n Please check the address!</string>
+
     <string name="server_name_google">Google +</string>
     <string name="server_name_git">GIT</string>
 
+    <string name="chooser_title">Choose browser</string>
     <string name="more_info">More info</string>
     <string name="have_repositories_on_git">Public repositories</string>
 
