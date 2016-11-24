@@ -12,7 +12,8 @@ import android.widget.TextView;
 import com.example.gek.studentslist.R;
 
 /**
- * Created by gek on 24.11.16.
+ * .Адаптер, который грузит данные с Cursor полученного через CursorLoader
+ * в айтемы листвью
  */
 
 public class ContactsAdapter extends CursorAdapter {
@@ -22,23 +23,17 @@ public class ContactsAdapter extends CursorAdapter {
     }
 
 
-    /*
-        Remember that these views are reused as needed.
-     */
+    // Формируем айтем (вью)
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_contact, parent, false);
         return view;
     }
 
-    /*
-        This is where we fill-in the views with the contents of the cursor.
-     */
+
+    // Выводим данные с курсора в наши вью
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // our view is pretty simple here --- just a text view
-        // we'll keep the UI functional with a simple (and slow!) binding.
-
         int nameColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
         TextView tvName = (TextView)view.findViewById(R.id.tvName);
         tvName.setText(cursor.getString(nameColumnIndex));

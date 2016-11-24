@@ -17,12 +17,15 @@ import com.example.gek.studentslist.adapters.ContactsAdapter;
 
 /**
  * Load contacts from phone and add new contact in phone
+ * USED: CursorLoader, CursorAdapter, Contract
+ *
+ * https://developer.android.com/training/contacts-provider/retrieve-details.html
  */
 
 public class ContactsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     ContactsAdapter mContactsAdapter;
     ListView lvContacts;
-    private static final int MY_LOADER_ID = 87;
+    private static final int MY_LOADER_ID = 87;     // ID нашего лоадера
 
 
     @Override
@@ -33,19 +36,30 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
         mContactsAdapter = new ContactsAdapter(this, null, 0);
         lvContacts = (ListView)findViewById(R.id.lvContacts);
         lvContacts.setAdapter(mContactsAdapter);
+
+        // Черезе менеджер инициализируем запуск лоадера
         getSupportLoaderManager().initLoader(MY_LOADER_ID, null, this);
     }
 
 
+    // Проверяем какой лоадер был создан (на случай когда их несколько)
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(this);
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        if (loaderId == MY_LOADER_ID){
+            return new MyCursorLoader(this);
+        } else {
+            return null;
+        }
+
     }
 
+    // Данные на этом этапе возвращаются лоадером в виде курсора.
+    // Подаем адаптеру полученные данные подменяя старый курсор
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mContactsAdapter.swapCursor(data);
     }
+
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
@@ -56,15 +70,21 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
      * Описываем наш кастомный лоадер для доступа к телефонной книке
      * */
     static class MyCursorLoader extends CursorLoader {
+        private static final String SORT_ORDER = ContactsContract.Contacts.DISPLAY_NAME + " ASC ";
+
         public MyCursorLoader(Context context) {
             super(context);
         }
 
         @Override
         public Cursor loadInBackground() {
-            // Get the ContentResolver which will send a message to the ContentProvider.
+            // Получаем ContentResolver и делаем через него запрос к ContentProvider (ContactsContract)
             ContentResolver resolver = getContext().getContentResolver();
-            Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            Cursor cursor = resolver.query(ContactsContract.Contacts.CONTENT_URI,
+                    null,
+                    null,
+                    null,
+                    SORT_ORDER);
             return cursor;
         }
 
