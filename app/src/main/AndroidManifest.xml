@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Доступ к контактной книге на телефоне -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
     <!-- Камера нужна в программе но не критично, т.е. установить app можно будет
     В коде программы наличие камеры можно проверить с помощью
     hasSystemFeature(PackageManager.FEATURE_CAMERA)
@@ -58,6 +61,12 @@
 
         <activity
             android:name=".activity.ReceiversActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+
+        <activity
+            android:name=".activity.ContactsActivity"
             android:screenOrientation="portrait">
         </activity>
 

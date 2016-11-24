@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GH16-Zhdanov-02-List</string>
+    <string name="app_name">GH16-Zhdanov-03-List</string>
     <string name="no_internet">No internet connection!</string>
     <string name="start_list_view">Show ListView</string>
     <string name="start_recylce_view">Show RecycleView</string>
@@ -15,6 +15,10 @@
     <string name="more_info">More info</string>
     <string name="have_repositories_on_git">Public repositories</string>
 
+    <string name="title_activity_contacts">Contacts</string>
+    <string name="name_hint">Person name</string>
+    <string name="phone_hint">000-000-00-00</string>
+    <string name="add_button">Add to contacts</string>
 
     <string name="title_activity_receivers">Receivers</string>
     <string name="start_activity_receivers">Show receivers</string>
