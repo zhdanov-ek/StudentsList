@@ -73,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intentRsv = new Intent(this, ReceiversActivity.class);
                 startActivity(intentRsv);
                 break;
+            case R.id.btnContactsLoaders:
+                Intent intentContLoaders = new Intent(this, ContactsLoadersActivity.class);
+                startActivity(intentContLoaders);
+                break;
             case R.id.btnContacts:
                 Intent intentCont = new Intent(this, ContactsActivity.class);
                 startActivity(intentCont);

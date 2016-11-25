@@ -66,9 +66,15 @@
 
 
         <activity
+            android:name=".activity.ContactsLoadersActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
             android:name=".activity.ContactsActivity"
             android:screenOrientation="portrait">
         </activity>
+
 
         <receiver
             android:name=".receivers.WiFiReceiver"
