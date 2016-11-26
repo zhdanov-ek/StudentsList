@@ -10,6 +10,7 @@
 
     <!-- Доступ к контактной книге на телефоне -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 
     <!-- Камера нужна в программе но не критично, т.е. установить app можно будет
     В коде программы наличие камеры можно проверить с помощью

@@ -1,7 +1,9 @@
 package com.example.gek.studentslist.activity;
 
 import android.app.ProgressDialog;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,36 +13,70 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+
+
 
 import com.example.gek.studentslist.R;
 
 import java.util.ArrayList;
 
 /**
- *
+ * Демонстрация полученя контактов с телефонной книги и добавление новой записи в нее
  */
 
 public class ContactsActivity extends AppCompatActivity {
+    EditText etName, etPhone;
     ListView lvContacts;
+    Button btnAddContact;
     ArrayList<String> contactList;
     Cursor cursor;
     int counter;
     private ProgressDialog pDialog;
     private Handler updateBarHandler;
+    Context mCtx;
+    public static final String TAG = "GEK";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+        mCtx = getBaseContext();
 
+        etName = (EditText) findViewById(R.id.etName);
+        etPhone = (EditText) findViewById(R.id.etPhone);
+
+        btnAddContact = (Button) findViewById(R.id.btnAddContact);
+        btnAddContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((etName.getText().toString().length() > 0) && (etPhone.getText().length() > 0)){
+                    if (insertContact(mCtx.getContentResolver(),
+                            etName.getText().toString(),
+                            etPhone.getText().toString())) {
+                        Toast.makeText(mCtx, "Contact has been added", Toast.LENGTH_SHORT).show();
+                        etName.setText("");
+                        etPhone.setText("");
+                    } else {
+                        Toast.makeText(mCtx, "Error! Contact not added", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(mCtx, "Please full all fields end retry", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        // Выводим диалог на время загрузки контактов
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Reading contacts...");
         pDialog.setCancelable(false);
         pDialog.show();
-        lvContacts = (ListView) findViewById(R.id.lvContacts);
         updateBarHandler =new Handler();
 
         // Выборку запускаем в отдельном потоке
@@ -51,6 +87,8 @@ public class ContactsActivity extends AppCompatActivity {
             }
         }).start();
 
+
+        lvContacts = (ListView) findViewById(R.id.lvContacts);
         // Клик по айтему
         lvContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -66,6 +104,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
+    /** Выборка всех контактов */
     public void getContacts() {
         contactList = new ArrayList<String>();
         String phoneNumber = null;
@@ -74,6 +113,7 @@ public class ContactsActivity extends AppCompatActivity {
         String _ID = ContactsContract.Contacts._ID;
         String DISPLAY_NAME = ContactsContract.Contacts.DISPLAY_NAME;
         String HAS_PHONE_NUMBER = ContactsContract.Contacts.HAS_PHONE_NUMBER;
+
         Uri PhoneCONTENT_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
         String Phone_CONTACT_ID = ContactsContract.CommonDataKinds.Phone.CONTACT_ID;
         String NUMBER = ContactsContract.CommonDataKinds.Phone.NUMBER;
@@ -85,15 +125,17 @@ public class ContactsActivity extends AppCompatActivity {
         StringBuffer output;
         ContentResolver contentResolver = getContentResolver();
 
+        String SORT_ORDER = ContactsContract.Contacts.DISPLAY_NAME + " ASC ";
+
         // Получаем список контактов
-        cursor = contentResolver.query(CONTENT_URI, null,null, null, null);
+        cursor = contentResolver.query(CONTENT_URI, null,null, null, SORT_ORDER);
         final int totalCount = cursor.getCount();
         // Для каждого контакта делаем свою итерацию где ищем телефоны и емейл
         if (cursor.getCount() > 0) {
             counter = 0;
             while (cursor.moveToNext()) {
                 output = new StringBuffer();
-                // Update the progress message
+                // Обновляем прогресбар
                 updateBarHandler.post(new Runnable() {
                     public void run() {
                         pDialog.setMessage("Reading contacts : "+ counter++ +"/"+ totalCount);
@@ -153,4 +195,40 @@ public class ContactsActivity extends AppCompatActivity {
             }, 500);
         }
     }
+
+    /** Добавление контакта в телефон */
+    public static boolean insertContact(ContentResolver contentResolver, String firstName, String mobileNumber) {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
+        // Сначала добавляем пустой контакт
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                .build());
+
+        //Добавляем имя контакта
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                .withValue(ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,firstName)
+                .build());
+
+        //Добавляем телефон
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                .withValue(ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER,mobileNumber)
+                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE,Phone.TYPE_MOBILE)
+                .build());
+        try {
+            // Пробуем через резолвер все записать
+            contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
 }

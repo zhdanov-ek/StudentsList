@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button btnListView, btnRecycleView, btnReceivers, btnContacts;
+    Button btnListView, btnRecycleView, btnReceivers, btnContactsLoaders, btnContacts;
     AudioReceiver mAudioReceiver;
     BluetoothReceiver mBluetoothReceiver;
 
@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnReceivers = (Button)findViewById(R.id.btnReceivers);
         btnReceivers.setOnClickListener(this);
 
+        btnContactsLoaders = (Button)findViewById(R.id.btnContactsLoaders);
+        btnContactsLoaders.setOnClickListener(this);
+
         btnContacts = (Button)findViewById(R.id.btnContacts);
         btnContacts.setOnClickListener(this);
 
@@ -46,6 +49,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         IntentFilter filterB = new IntentFilter("android.bluetooth.adapter.action.STATE_CHANGED");
         registerReceiver(mBluetoothReceiver, filterB);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // снимаем ресиверы перед закрытием
+        unregisterReceiver(mBluetoothReceiver);
+        unregisterReceiver(mAudioReceiver);
     }
 
     @Override
