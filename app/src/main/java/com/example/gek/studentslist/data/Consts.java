@@ -7,6 +7,8 @@ package com.example.gek.studentslist.data;
 public final class Consts {
     public static final String URL_GOOGLE_BASE = "https://www.googleapis.com/plus/v1/people/";
     public static final String URL_GOOGLE_HOST = "plus.google.com";
+//    public static final String FIELDS_GOOGLE_FOR_REQUEST = "displayName,image,name,url,gender";
+public static final String FIELDS_GOOGLE_FOR_REQUEST = "displayName,image,name,url,gender";
     public static final String URL_GIT_BASE = "https://api.github.com/users/";
     public static final String URL_GIT_HOST = "github.com";
 

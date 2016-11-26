@@ -22,7 +22,9 @@ import com.example.gek.studentslist.BuildConfig;
 import com.example.gek.studentslist.R;
 import com.example.gek.studentslist.data.Consts;
 import com.example.gek.studentslist.retrofits.ResponseGit;
+import com.example.gek.studentslist.retrofits.ResponseGoogle;
 import com.example.gek.studentslist.retrofits.ServiceGit;
+import com.example.gek.studentslist.retrofits.ServiceGoogle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -67,13 +69,6 @@ public class PersonActivity extends AppCompatActivity {
     private static final String TAG = "11111";
 
     private Context ctx;
-
-    private Retrofit retrofitGit = new Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(Consts.URL_GIT_BASE)
-            .build();
-
-    private ServiceGit serviceGit = retrofitGit.create(ServiceGit.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +115,16 @@ public class PersonActivity extends AppCompatActivity {
         // Явный интент с нашего активити с указанием карточки в Google Plus
         if (typeCard == Consts.TYPE_CARD_GOOGLE){
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_google));
-            new LoadInfoFromServer()
-                    .execute(intent.getStringExtra(Consts.ID_GOOGLE),
-                            Integer.toString(Consts.TYPE_CARD_GOOGLE));
+
+            // грузим через ретрофит
+            loadGoogleInfo(intent.getStringExtra(Consts.ID_GOOGLE),
+                    Consts.FIELDS_GOOGLE_FOR_REQUEST,
+                    BuildConfig.GOOGLE_API_KEY);
+
+            // грузим и парсим базовыми методами
+//            new LoadInfoFromServer()
+//                    .execute(intent.getStringExtra(Consts.ID_GOOGLE),
+//                            Integer.toString(Consts.TYPE_CARD_GOOGLE));
         }
 
         // Явный интент с нашего активити с указанием карточки в GitHub
@@ -152,12 +154,15 @@ public class PersonActivity extends AppCompatActivity {
             // Возвращает имя хоста: plus.google.com или github.com
             String host = data.getHost();
 
-            // Смотрим на хост и обрабатывем ссылку соответствующим образом
+            // По URL определяем с какого сервера запрашивать инфу
             if (host.contentEquals(Consts.URL_GOOGLE_HOST)) {
                 String idUserGoogle = data.getLastPathSegment();
-                new LoadInfoFromServer()
-                        .execute(idUserGoogle,
-                                Integer.toString(Consts.TYPE_CARD_GOOGLE));
+                loadGoogleInfo(idUserGoogle,
+                        Consts.FIELDS_GOOGLE_FOR_REQUEST,
+                        BuildConfig.GOOGLE_API_KEY);
+//                new LoadInfoFromServer()
+//                        .execute(idUserGoogle,
+//                                Integer.toString(Consts.TYPE_CARD_GOOGLE));
             }
 
             if (host.contentEquals(Consts.URL_GIT_HOST)) {
@@ -169,16 +174,24 @@ public class PersonActivity extends AppCompatActivity {
                 // Изымаем из URL последнюю часть где указан юзер и подаем это значение дальше
                 String idUserGit = data.getLastPathSegment();
 
-                new LoadInfoFromServer()
-                        .execute(idUserGit,
-                                Integer.toString(Consts.TYPE_CARD_GIT));
+                // грузим через ретрофит
+                loadGitInfo(idUserGit);
+
+//                new LoadInfoFromServer()
+//                        .execute(idUserGit,
+//                                Integer.toString(Consts.TYPE_CARD_GIT));
             }
         }
 
     }
 
-    /** Загрузка инфы и ее парсинг с ГИТ средствами ретрофита */
+    /** Загрузка инфы и ее парсинг с GITHUB средствами ретрофита */
     private void loadGitInfo(String idUser){
+        Retrofit retrofitGit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(Consts.URL_GIT_BASE)
+                .build();
+        ServiceGit serviceGit = retrofitGit.create(ServiceGit.class);
 
         // Создаем интерфейс call на основе нашего интерфейса. Подаем ему на вход ID,
         // а получаем класс ResponseGit, который содержит все поля с json ответа
@@ -218,6 +231,50 @@ public class PersonActivity extends AppCompatActivity {
     }
 
 
+    /** Загрузка инфы и ее парсинг с GOOGLE средствами ретрофита */
+    private void loadGoogleInfo(String idUser, String fields, String apiKey){
+
+        Retrofit retrofitGoogle = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(Consts.URL_GOOGLE_BASE)
+                .build();
+        ServiceGoogle serviceGoogle = retrofitGoogle.create(ServiceGoogle.class);
+
+        // Создаем интерфейс call на основе нашего интерфейса. Подаем ему на вход ID, fields, key
+        // а получаем класс ResponseGoogle, который содержит все поля с json ответа
+        Call<ResponseGoogle> call = serviceGoogle.loadUserInfo(idUser, fields, apiKey);
+        Log.d(TAG, "http request: " + call.request().toString());
+        call.enqueue(new Callback<ResponseGoogle>() {
+            @Override
+            public void onResponse(Call<ResponseGoogle> call, Response<ResponseGoogle> response) {
+                if (response.isSuccessful()) {
+                    // Сразу начинаем грузить в таске нашу картинку и заполняем поля значениями
+                    // В линке на картинку меняем параметр отвечающий за размер
+                    String urlImage = response.body().getImage().getUrlImage();
+                    urlImage = urlImage.replace("sz=50", "sz=500");
+                    ImageLoadTask  loadImageTask = new ImageLoadTask(urlImage, ivAva);
+                    loadImageTask.execute();
+
+                    // Если имя не указанно то выводим его с другого поля
+                    if (response.body().getName().getFamilyName().isEmpty()){
+                        tvName.setText(response.body().getDisplayName());
+                    } else {
+                        tvName.setText(response.body().getName().getFamilyName() + " " +
+                                response.body().getName().getGivenName());
+                    }
+                    tvUrlProfile.setText(response.body().getUrlUser());
+                    tvUrlProfile.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseGoogle> call, Throwable t) {
+            }
+        });
+    }
+
+
+
+
 
 
 
@@ -238,11 +295,9 @@ public class PersonActivity extends AppCompatActivity {
             switch (typeCard){
                 case Consts.TYPE_CARD_GOOGLE:
                     // указываем поля, которые хотим получить. Без указания получим все
-                    final String FIELDS_GOOGLE = "image,name,organizations,url,urls";
-                    final String KEY_GOOGLE = BuildConfig.GOOGLE_API_KEY;
                     Uri uriGoogle = Uri.parse(Consts.URL_GOOGLE_BASE + idUser).buildUpon()
-                            .appendQueryParameter("fields", FIELDS_GOOGLE)
-                            .appendQueryParameter("key", KEY_GOOGLE)
+                            .appendQueryParameter("fields", Consts.FIELDS_GOOGLE_FOR_REQUEST)
+                            .appendQueryParameter("key", BuildConfig.GOOGLE_API_KEY)
                             .build();
 
                     // Загружаем инфу с сервера, а результат парсим формируя ContentValues
