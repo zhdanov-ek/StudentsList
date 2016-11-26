@@ -21,6 +21,10 @@ import android.widget.Toast;
 import com.example.gek.studentslist.BuildConfig;
 import com.example.gek.studentslist.R;
 import com.example.gek.studentslist.data.Consts;
+import com.example.gek.studentslist.retrofits.ResponseGit;
+import com.example.gek.studentslist.retrofits.ServiceGit;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 import org.json.JSONException;
@@ -32,6 +36,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Класс принимающий на вход URL профиля пользователя на github.com или plus.google.com
@@ -53,8 +64,16 @@ public class PersonActivity extends AppCompatActivity {
     LinearLayout llPersonBack;
     ImageView ivLogo;
     Button btnMore;
+    private static final String TAG = "11111";
 
     private Context ctx;
+
+    private Retrofit retrofitGit = new Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(Consts.URL_GIT_BASE)
+            .build();
+
+    private ServiceGit serviceGit = retrofitGit.create(ServiceGit.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +118,7 @@ public class PersonActivity extends AppCompatActivity {
         int typeCard = intent.getIntExtra(Consts.TYPE_CARD, 0);
 
         // Явный интент с нашего активити с указанием карточки в Google Plus
-        if ( typeCard == Consts.TYPE_CARD_GOOGLE){
+        if (typeCard == Consts.TYPE_CARD_GOOGLE){
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_google));
             new LoadInfoFromServer()
                     .execute(intent.getStringExtra(Consts.ID_GOOGLE),
@@ -112,9 +131,14 @@ public class PersonActivity extends AppCompatActivity {
             btnMore.setBackground(getResources().getDrawable(R.drawable.bg_button_git));
             btnMore.setTextColor(getResources().getColor(R.color.colorGit));
             ivLogo.setBackground(getResources().getDrawable(R.drawable.logo_git));
-            new LoadInfoFromServer()
-                    .execute(intent.getStringExtra(Consts.ID_GIT),
-                            Integer.toString(Consts.TYPE_CARD_GIT));
+
+            // грузим через ретрофит
+            loadGitInfo(intent.getStringExtra(Consts.ID_GIT));
+
+            // грузим и парсим базовыми методами
+//            new LoadInfoFromServer()
+//                    .execute(intent.getStringExtra(Consts.ID_GIT),
+//                            Integer.toString(Consts.TYPE_CARD_GIT));
         }
 
         // Интент с другой программы. Изымаем URL, парсим его и пытаемся получить инфу
@@ -152,6 +176,49 @@ public class PersonActivity extends AppCompatActivity {
         }
 
     }
+
+    /** Загрузка инфы и ее парсинг с ГИТ средствами ретрофита */
+    private void loadGitInfo(String idUser){
+
+        // Создаем интерфейс call на основе нашего интерфейса. Подаем ему на вход ID,
+        // а получаем класс ResponseGit, который содержит все поля с json ответа
+        Call<ResponseGit> call = serviceGit.loadUserInfo(idUser);
+        call.enqueue(new Callback<ResponseGit>() {
+            @Override
+            public void onResponse(Call<ResponseGit> call, Response<ResponseGit> response) {
+                if (response.isSuccessful()){
+                    String jsonResult = response.body().toString();
+                    Log.i(TAG, "jsonResult = " + jsonResult);
+
+                    // Сразу начинаем грузить в таске нашу картинку и заполняем поля значениями
+                    ImageLoadTask  loadImageTask =
+                            new ImageLoadTask(response.body().getAvatarUrl(), ivAva);
+                    loadImageTask.execute();
+                    tvName.setText(response.body().getName());
+                    tvUrlProfile.setText(response.body().getHtmlUrl());
+                    tvUrlProfile.setVisibility(View.GONE);
+
+                    if (response.body().getPublicRepos() > 0) {
+                        tvOther.setText(getString(R.string.have_repositories_on_git) +
+                                " " + response.body().getPublicRepos());
+                    }
+                    btnMore.setEnabled(true);
+
+                } else {
+                    btnMore.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
+                    ivAva.setVisibility(View.GONE);
+                    tvOther.setText(R.string.error_in_link);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseGit> call, Throwable t) {
+            }
+        });
+    }
+
+
+
 
 
     /** Загружает инфу с Google Plus или GIT
