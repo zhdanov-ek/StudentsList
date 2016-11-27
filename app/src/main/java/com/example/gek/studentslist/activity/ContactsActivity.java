@@ -144,38 +144,41 @@ public class ContactsActivity extends AppCompatActivity {
                 String contact_id = cursor.getString(cursor.getColumnIndex( _ID ));
                 String name = cursor.getString(cursor.getColumnIndex( DISPLAY_NAME ));
 
-                // Проверяем есть ли номера у контакта и если есть то делаем запрос в другую таблицу
-                int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex( HAS_PHONE_NUMBER )));
-                if (hasPhoneNumber > 0) {
-                    output.append(" First Name: " + name);
-                    // Ищем телефоны, который принадлежат текущему контакту
-                    Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI,
-                            null,
-                            Phone_CONTACT_ID + " = ?",
-                            new String[] { contact_id },
-                            null);
+                if ( !(name == null)) {
+                    // Проверяем есть ли номера у контакта и если есть то делаем запрос в другую таблицу
+                    int hasPhoneNumber = Integer.parseInt(cursor.getString(cursor.getColumnIndex( HAS_PHONE_NUMBER )));
+                    if (hasPhoneNumber > 0) {
+                        output.append(" First Name: " + name);
+                        // Ищем телефоны, который принадлежат текущему контакту
+                        Cursor phoneCursor = contentResolver.query(PhoneCONTENT_URI,
+                                null,
+                                Phone_CONTACT_ID + " = ?",
+                                new String[] { contact_id },
+                                null);
 
-                    // Добавляем все найденные телефоны
-                    while (phoneCursor.moveToNext()) {
-                        phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
-                        output.append("\n Phone number: " + phoneNumber);
-                    }
-                    phoneCursor.close();
+                        // Добавляем все найденные телефоны
+                        while (phoneCursor.moveToNext()) {
+                            phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(NUMBER));
+                            output.append("\n Phone number: " + phoneNumber);
+                        }
+                        phoneCursor.close();
 
-                    // Ищем емейлы текущего контакта и добавляем их если нашли
-                    Cursor emailCursor = contentResolver.query(EmailCONTENT_URI,
-                            null,
-                            EmailCONTACT_ID+ " = ?",
-                            new String[] { contact_id },
-                            null);
-                    while (emailCursor.moveToNext()) {
-                        email = emailCursor.getString(emailCursor.getColumnIndex(DATA));
-                        output.append("\n Email: " + email);
+                        // Ищем емейлы текущего контакта и добавляем их если нашли
+                        Cursor emailCursor = contentResolver.query(EmailCONTENT_URI,
+                                null,
+                                EmailCONTACT_ID+ " = ?",
+                                new String[] { contact_id },
+                                null);
+                        while (emailCursor.moveToNext()) {
+                            email = emailCursor.getString(emailCursor.getColumnIndex(DATA));
+                            output.append("\n Email: " + email);
+                        }
+                        emailCursor.close();
                     }
-                    emailCursor.close();
+                    // Добавляем очередную запись контакта в список
+                    contactList.add(output.toString());
                 }
-                // Добавляем очередную запись контакта в список
-                contactList.add(output.toString());
+
             }
             // Запускаем в основном потоке обновление данных в списке
             runOnUiThread(new Runnable() {
@@ -187,6 +190,16 @@ public class ContactsActivity extends AppCompatActivity {
                 }
             });
             // Отключаем прогресс бар
+            updateBarHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pDialog.cancel();
+                }
+            }, 500);
+        }
+
+        else {
+            // Отключаем прогресс бар если контактов нет вообще
             updateBarHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

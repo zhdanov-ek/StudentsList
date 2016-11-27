@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GH16-Zhdanov-03-List</string>
+    <string name="app_name">GH16-Zhdanov-Lists</string>
     <string name="no_internet">No internet connection!</string>
     <string name="start_list_view">Show ListView</string>
     <string name="start_recylce_view">Show RecycleView</string>

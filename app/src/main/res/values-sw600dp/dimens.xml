@@ -16,8 +16,8 @@
 
     <dimen name="ava_size">300dp</dimen>
 
-    <dimen name="text_size_middle">20dp</dimen>
-    <dimen name="text_size_big">40dp</dimen>
+    <dimen name="text_size_middle">20sp</dimen>
+    <dimen name="text_size_big">40sp</dimen>
 
     <!-- Button MORE -->
     <dimen name="button_more_height">30dp</dimen>
