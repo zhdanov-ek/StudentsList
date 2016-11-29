@@ -8,7 +8,8 @@ import android.graphics.Paint;
 import com.squareup.picasso.Transformation;
 
 /**
- * Класс описывающий преобразования исходного битмапа в необходимый
+ * Класс описывающий преобразования исходного битмапа в необходимый.
+ * В данном случае
  * */
 
 public class CircleTransformation implements Transformation {

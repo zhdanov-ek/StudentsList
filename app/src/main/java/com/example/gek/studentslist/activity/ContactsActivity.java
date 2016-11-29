@@ -1,6 +1,8 @@
 package com.example.gek.studentslist.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,13 +26,16 @@ import java.util.List;
 public class ContactsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<User>>{
     private static final int ID_LOADER_READ_PB = 55;
     private RecyclerView recyclerView;
-    ContactsAdapter adapter;
+    private ContactsAdapter adapter;
+
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+
+
 
         // запускаем лоадер
         getSupportLoaderManager().initLoader(ID_LOADER_READ_PB, null, this).forceLoad();
