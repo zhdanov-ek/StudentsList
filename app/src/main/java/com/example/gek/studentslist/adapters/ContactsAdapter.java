@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by gek on 29.11.2016.
+ * Адаптер
  */
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder>{
@@ -32,6 +32,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder>{
     }
 
 
+    // вызывается для создания необходимого кол-ва айтемов в RecyclerView (на пару шт больше чем видно)
     @Override
     public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (inflater == null) {
@@ -40,6 +41,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder>{
         return ContactViewHolder.create(inflater, parent);
     }
 
+    // вызывается для заполнения конкретного айтема
     @Override
     public void onBindViewHolder(ContactViewHolder holder, int position) {
         holder.bind(users.get(position));
