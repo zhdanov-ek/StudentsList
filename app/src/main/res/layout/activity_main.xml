@@ -30,12 +30,6 @@
         android:text="@string/start_activity_receivers"/>
 
     <Button
-        android:id="@+id/btnContactsLoaders"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/title_activity_contacts_loaders"/>
-
-    <Button
         android:id="@+id/btnContacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

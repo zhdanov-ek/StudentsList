@@ -1,41 +1,52 @@
 package com.example.gek.studentslist.adapters;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.provider.ContactsContract;
-import android.support.v4.widget.CursorAdapter;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.gek.studentslist.R;
+import com.example.gek.studentslist.data.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * .Адаптер, который грузит данные с Cursor полученного через CursorLoader
- * в айтемы листвью
+ * Created by gek on 29.11.2016.
  */
 
-public class ContactsAdapter extends CursorAdapter {
+public class ContactsAdapter extends RecyclerView.Adapter<ContactViewHolder>{
 
-    public ContactsAdapter(Context context, Cursor c, int flags) {
-        super(context, c, flags);
+    private final List<User> users = new ArrayList<>();
+    private LayoutInflater inflater;
+
+    public ContactsAdapter(@Nullable List<User> usersList) {
+        updateAdapter(usersList);
+    }
+
+    public void updateAdapter(@Nullable List<User> usersList) {
+        users.clear();
+        if (usersList != null) {
+            users.addAll(usersList);
+        }
+        notifyDataSetChanged();
     }
 
 
-    // Формируем айтем (вью)
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_contact, parent, false);
-        return view;
+    public ContactViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (inflater == null) {
+            inflater = LayoutInflater.from(parent.getContext());
+        }
+        return ContactViewHolder.create(inflater, parent);
     }
 
-
-    // Выводим данные с курсора в наши вью
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        int nameColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-        TextView tvName = (TextView)view.findViewById(R.id.tvName);
-        tvName.setText(cursor.getString(nameColumnIndex));
+    public void onBindViewHolder(ContactViewHolder holder, int position) {
+        holder.bind(users.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return users.size();
     }
 }

@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".activity.ListViewActivity" />
         <activity android:name=".activity.RecyclerViewActivity" />
+        <activity android:name=".activity.ContactsActivity"/>
         <activity
             android:name=".activity.PersonActivity"
             android:screenOrientation="portrait">
@@ -63,17 +64,6 @@
 
         <activity
             android:name=".activity.ReceiversActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
-
-        <activity
-            android:name=".activity.ContactsLoadersActivity"
-            android:screenOrientation="portrait">
-        </activity>
-
-        <activity
-            android:name=".activity.ContactsActivity"
             android:screenOrientation="portrait">
         </activity>
 

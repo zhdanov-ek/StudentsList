@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button btnListView, btnRecycleView, btnReceivers, btnContactsLoaders, btnContacts;
+    Button btnListView, btnRecycleView, btnReceivers, btnContacts;
     AudioReceiver mAudioReceiver;
     BluetoothReceiver mBluetoothReceiver;
 
@@ -34,9 +34,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btnReceivers = (Button)findViewById(R.id.btnReceivers);
         btnReceivers.setOnClickListener(this);
-
-        btnContactsLoaders = (Button)findViewById(R.id.btnContactsLoaders);
-        btnContactsLoaders.setOnClickListener(this);
 
         btnContacts = (Button)findViewById(R.id.btnContacts);
         btnContacts.setOnClickListener(this);
@@ -84,10 +81,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intentRsv = new Intent(this, ReceiversActivity.class);
                 startActivity(intentRsv);
                 break;
-            case R.id.btnContactsLoaders:
-                Intent intentContLoaders = new Intent(this, ContactsLoadersActivity.class);
-                startActivity(intentContLoaders);
-                break;
+
             case R.id.btnContacts:
                 Intent intentCont = new Intent(this, ContactsActivity.class);
                 startActivity(intentCont);
