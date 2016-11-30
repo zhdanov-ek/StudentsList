@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -15,23 +15,23 @@
         android:id="@+id/btnListView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_list_view"/>
+        android:text="@string/start_list_view" />
 
     <Button
         android:id="@+id/btnRecycleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_recylce_view"/>
+        android:text="@string/start_recylce_view" />
 
     <Button
         android:id="@+id/btnReceivers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_activity_receivers"/>
+        android:text="@string/start_activity_receivers" />
 
     <Button
         android:id="@+id/btnContacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title_activity_contacts"/>
+        android:text="@string/title_activity_contacts" />
 </LinearLayout>

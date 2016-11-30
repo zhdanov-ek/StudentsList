@@ -247,6 +247,7 @@ public class PersonActivity extends AppCompatActivity {
                     }
                     tvUrlProfile.setText(response.body().getUrlUser());
                     tvUrlProfile.setVisibility(View.GONE);
+                    btnMore.setEnabled(true);
                 }
             }
             @Override

@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
     android:padding="8dp">
 
     <ImageView
         android:id="@+id/ivIcon"
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
-        android:scaleType="centerCrop"
         android:contentDescription="@null"
-        tools:src="@drawable/oval"/>
+        android:scaleType="centerCrop"
+        tools:src="@drawable/oval" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="10dp">
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/tvContactName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="User name"
-            android:maxLines="1"
             android:ellipsize="end"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+            android:maxLines="1"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            tools:text="User name" />
+
         <TextView
             android:id="@+id/tvContactPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="+38 000 000 0000"
             android:layout_below="@id/tvContactName"
             android:layout_marginTop="4dp"
             android:maxLines="1"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"/>
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+            tools:text="+38 000 000 0000" />
 
     </LinearLayout>
 

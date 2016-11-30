@@ -2,10 +2,8 @@ package com.example.gek.studentslist.dialogs;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,12 +17,14 @@ import com.example.gek.studentslist.R;
 import java.util.ArrayList;
 
 /**
- * Created by gek on 30.11.2016.
+ * Класс кастомного диалогового окна для ввода нового контакта.
  */
 
 public class AddContactDialog extends DialogFragment implements View.OnClickListener {
     EditText etName, etPhone;
 
+
+    // Переопределяем лаяут окна, формируя его на соновании шаблона XML
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
@@ -34,7 +34,6 @@ public class AddContactDialog extends DialogFragment implements View.OnClickList
         v.findViewById(R.id.btnCancel).setOnClickListener(this);
         etName = (EditText)v.findViewById(R.id.etName);
         etPhone = (EditText)v.findViewById(R.id.etPhone);
-
         return v;
     }
 
@@ -42,7 +41,6 @@ public class AddContactDialog extends DialogFragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnOk:
-                Log.d("1111", "onClick: OK");
                 String name = etName.getText().toString();
                 String phone = etPhone.getText().toString();
                 if (name.isEmpty() || phone.isEmpty()){
@@ -57,7 +55,6 @@ public class AddContactDialog extends DialogFragment implements View.OnClickList
                 }
                 break;
             case R.id.btnCancel:
-                Log.d("1111", "onClick: CANCEL");
                 dismiss();
                 break;
         }

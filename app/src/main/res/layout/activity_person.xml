@@ -8,29 +8,30 @@
     android:orientation="vertical"
     android:paddingBottom="@dimen/person_frame"
     tools:context="com.example.gek.studentslist.activity.PersonActivity">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/ivLogo"
             android:layout_width="@dimen/logo_server_size"
             android:layout_height="@dimen/logo_server_size"
             android:layout_margin="10dp"
-            tools:src="@drawable/logo_google"/>
+            tools:src="@drawable/logo_google" />
 
         <ImageView
             android:id="@+id/ivGender"
             android:layout_width="@dimen/gender_size"
             android:layout_height="@dimen/gender_size"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="33dp"
-            android:visibility="invisible"/>
+            android:layout_marginRight="33dp"
+            android:visibility="invisible" />
 
     </RelativeLayout>
-
 
 
     <LinearLayout
@@ -59,7 +60,7 @@
             android:gravity="center_horizontal"
             android:textSize="@dimen/text_size_middle"
             tools:text="Name" />
-        
+
 
         <TextView
             android:id="@+id/tvUrlProfile"
