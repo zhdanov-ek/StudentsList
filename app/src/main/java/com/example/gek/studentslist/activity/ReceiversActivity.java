@@ -46,6 +46,7 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnLoadImage:
+                // todo сделать, что бы работало на АРI 23
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 if (photoPickerIntent.resolveActivity(getPackageManager()) != null){
@@ -54,6 +55,7 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.btnMakePhoto:
+                //todo проверить пермишен на камеру и вообще сделать, что бы работало на АРI 23
                 Intent makePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (makePhotoIntent.resolveActivity(getPackageManager()) != null){
                     startActivityForResult(makePhotoIntent, REQUEST_MAKE_PHOTO);

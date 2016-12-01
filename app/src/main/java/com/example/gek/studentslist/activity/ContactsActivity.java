@@ -8,8 +8,8 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +19,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.gek.studentslist.R;
 import com.example.gek.studentslist.adapters.ContactsAdapter;
@@ -72,11 +71,13 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
 
         // Если разрешения нет то просим юзера его добавить или же информируем как включить его в настройках
         } else {
-            // Проверяем нужно ли все еще спрашивть о получении этого разрешении у юзера
+            // Проверяем нужно ли запрашивать разрешение с пояснениями на получения разрешений
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, READ_CONTACTS)) {
-                //Показываем диалоговое окно с пояснениями о добавлении разрешений
-                showExplanationDialog(READ_CONTACTS_REQUEST);
+                // Показываем диалоговое окно с пояснениями о добавлении разрешений
+                // А также двумя способами включения разрешений
+                showExplanationDialog();
             } else {
+                // Просто вызываем окно на получение разрешения
                 ActivityCompat.requestPermissions(
                         this,
                         new String[]{READ_CONTACTS},
@@ -93,15 +94,11 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
                     new AddContactDialog().show(getSupportFragmentManager(), "add_dialog");
                 } else {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(ContactsActivity.this, WRITE_CONTACTS )){
-                        showExplanationDialog(WRITE_CONTACTS_REQUEST);
+                        showExplanationDialog();
                     } else {
-                        ActivityCompat.requestPermissions(
-                                ContactsActivity.this,
-                                new String[]{WRITE_CONTACTS},
-                                WRITE_CONTACTS_REQUEST);
+                        showSnackToSettingsOpen();
                     }
                 }
-
             }
         });
     }
@@ -154,15 +151,10 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
                     getSupportLoaderManager().initLoader(ID_LOADER_READ_PB, null, this).forceLoad();
                     fabAdd.setEnabled(true);
                 } else {
-                    showExplanationDialog(READ_CONTACTS_REQUEST);
-                }
-                break;
-
-            case WRITE_CONTACTS_REQUEST:
-                if (grantResults[0] == PERMISSION_GRANTED) {
-                    new AddContactDialog().show(getSupportFragmentManager(), "add_dialog");
-                } else {
-                    showExplanationDialog(WRITE_CONTACTS_REQUEST);
+                    // Если возвращается тут false то уже поставили галочку "не спрашивать"
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(ContactsActivity.this, READ_CONTACTS )) {
+                        showSnackToSettingsOpen();
+                    }
                 }
                 break;
         }
@@ -170,28 +162,17 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
 
 
     // Диалог запроса разрешения, где юзер выбирает заправшивать разрешения или запускать настройки
-    private void showExplanationDialog(final int typePermissonRequest) {
-        String title = "";
-        final String[] permission = new String[1];
-
-        switch (typePermissonRequest){
-            case READ_CONTACTS_REQUEST:
-                title = getResources().getString(R.string.read_contacts_err);
-                permission[0] = READ_CONTACTS;
-                break;
-            case WRITE_CONTACTS_REQUEST:
-                title = getResources().getString(R.string.write_contact_err);
-                permission[0] = WRITE_CONTACTS;
-                break;
-        }
-
+    private void showExplanationDialog() {
         new AlertDialog.Builder(this)
-                .setMessage(title)
+                .setMessage(R.string.read_contacts_err)
                 // Запрос разрешиния
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(ContactsActivity.this, permission, typePermissonRequest);
+                        ActivityCompat.requestPermissions(
+                                ContactsActivity.this,
+                                new String[] {READ_CONTACTS},
+                                READ_CONTACTS_REQUEST);
                     }
                 })
                 // запуск окна с настройками программы через интент
@@ -202,6 +183,19 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
                     }
                 })
                 .create()
+                .show();
+    }
+
+
+    // Когда разрешения можно будет включит только через настройки бросаем этот тост
+    private void showSnackToSettingsOpen(){
+        Snackbar.make(recyclerView, R.string.permissions_not_granted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.go_to_settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openPermissionSettings();
+                    }
+                })
                 .show();
     }
 
