@@ -28,5 +28,6 @@
         android:layout_gravity="end|bottom"
         app:fabSize="normal"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:useCompatPadding="true" />
+        app:useCompatPadding="true"
+        android:clickable="false"/>
 </FrameLayout>

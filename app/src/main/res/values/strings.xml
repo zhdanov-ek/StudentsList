@@ -35,4 +35,8 @@
 
     <string name="load_image">Load image</string>
     <string name="make_photo">Make photo</string>
+
+    <string name="read_contacts_err">Need permissions for read contacts!</string>
+    <string name="write_contact_err">Need permissions for write a contact!</string>
+    <string name="go_to_settings">Got to settings</string>
 </resources>

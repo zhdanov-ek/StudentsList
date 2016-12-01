@@ -48,6 +48,7 @@ public class AddContactDialog extends DialogFragment implements View.OnClickList
                 } else {
                     if (insertContact(getContext().getContentResolver(), name, phone)){
                         Toast.makeText(getContext(), R.string.new_contact_created, Toast.LENGTH_SHORT).show();
+                        //todo тут нужно послать меседж в активити для обновления списка
                         dismiss();
                     } else {
                         Toast.makeText(getContext(),R.string.new_contact_error, Toast.LENGTH_SHORT).show();
