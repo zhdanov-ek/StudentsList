@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.gek.studentslist.R;
+import com.example.gek.studentslist.activity.ContactsActivity;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 
 public class AddContactDialog extends DialogFragment implements View.OnClickListener {
     EditText etName, etPhone;
+
+
 
 
     // Переопределяем лаяут окна, формируя его на соновании шаблона XML
@@ -47,8 +50,15 @@ public class AddContactDialog extends DialogFragment implements View.OnClickList
                     Toast.makeText(getContext(),R.string.new_contact_empty_fields, Toast.LENGTH_SHORT).show();
                 } else {
                     if (insertContact(getContext().getContentResolver(), name, phone)){
-                        Toast.makeText(getContext(), R.string.new_contact_created, Toast.LENGTH_SHORT).show();
-                        //todo тут нужно послать меседж в активити для обновления списка
+                        String mes = getResources().getString(R.string.new_contact_created);
+                        Toast.makeText(getContext(),
+                                mes + "\n" + name + ": " + phone,
+                                Toast.LENGTH_SHORT)
+                                .show();
+
+                        // обновляем в списке контакты после добавления
+                        ContactsActivity contactsActivity = (ContactsActivity) getActivity();
+                        contactsActivity.loadContacts();
                         dismiss();
                     } else {
                         Toast.makeText(getContext(),R.string.new_contact_error, Toast.LENGTH_SHORT).show();

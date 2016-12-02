@@ -42,9 +42,7 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
     private ProgressBar progressBar;
     private FloatingActionButton fabAdd;
 
-
     private static final int READ_CONTACTS_REQUEST = 1;
-    private static final int WRITE_CONTACTS_REQUEST = 2;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,7 +64,7 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
         if (ActivityCompat.checkSelfPermission(this, READ_CONTACTS) == PERMISSION_GRANTED) {
             // если есть то запускаем лоадер, читающий контакты
             // todo Вероятно тут надо показывать прогресс бар
-            getSupportLoaderManager().initLoader(ID_LOADER_READ_PB, null, this).forceLoad();
+            loadContacts();
             fabAdd.setEnabled(true);
 
         // Если разрешения нет то просим юзера его добавить или же информируем как включить его в настройках
@@ -103,6 +101,10 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
         });
     }
 
+    // Запуск лоадера на загрузку контактов
+    public void loadContacts(){
+        getSupportLoaderManager().initLoader(ID_LOADER_READ_PB, null, this).forceLoad();
+    }
 
     // Обновление списка
     public void updateUI(List<User> users) {
@@ -148,7 +150,7 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
             case READ_CONTACTS_REQUEST:
                 if (grantResults[0] == PERMISSION_GRANTED) {
                     // todo Вероятно тут надо показывать прогресс бар
-                    getSupportLoaderManager().initLoader(ID_LOADER_READ_PB, null, this).forceLoad();
+                    loadContacts();
                     fabAdd.setEnabled(true);
                 } else {
                     // Если возвращается тут false то уже поставили галочку "не спрашивать"
