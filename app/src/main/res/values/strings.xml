@@ -37,6 +37,7 @@
     <string name="make_photo">Make photo</string>
 
     <string name="read_contacts_err">Need permissions for read contacts!</string>
+    <string name="use_camera_err">Need permissions for use camera</string>
     <string name="permissions_not_granted">Contacts permission is not granted</string>
     <string name="go_to_settings">Settings</string>
 </resources>

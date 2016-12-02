@@ -33,7 +33,9 @@ import static android.Manifest.permission.WRITE_CONTACTS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 /**
- * Created by gek on 29.11.2016.
+ * Чтение контактов из телефона с помощью лоадера AsyncTaskLoader.
+ * Проверка разрешений для API 23.
+ * Добавление контакта в телефон через DialogFragment
  */
 
 public class ContactsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<User>>{

@@ -1,11 +1,18 @@
 package com.example.gek.studentslist.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.gek.studentslist.R;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 
 /**
@@ -27,6 +38,7 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
     public static final int REQUEST_LOAD_IMG = 1;
     public static final int REQUEST_MAKE_PHOTO = 2;
     public static final String LOG_TAG = "MyLog";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +68,118 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
 
             case R.id.btnMakePhoto:
                 //todo проверить пермишен на камеру и вообще сделать, что бы работало на АРI 23
-                Intent makePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (makePhotoIntent.resolveActivity(getPackageManager()) != null){
-                    startActivityForResult(makePhotoIntent, REQUEST_MAKE_PHOTO);
-                }
-                break;
 
+                // Проверяем есть ли вообще камера на устройстве
+                // Через PackageManager можно получить информацию о многих возможностях
+                PackageManager pm = getPackageManager();
+                if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                    // Проверяем есть ли разрешения на камеру
+                    // прежде чем ее использовать (для АПИ 23)
+                    if (ActivityCompat.checkSelfPermission(this, CAMERA) == PERMISSION_GRANTED) {
+                        makePhoto();
+                    } else {
+                        // Если разрешения нет то просим юзера его добавить или же информируем как
+                        // включить его в настройках.  Проверяем нужно ли запрашивать разрешение с
+                        // пояснениями на получения разрешений
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, CAMERA)) {
+                            // Показываем диалоговое окно с пояснениями о добавлении разрешения
+                            // А также двумя способами включения разрешений
+                            showExplanationDialog();
+                        } else {
+                            // Просто вызываем окно на получение разрешения
+                            ActivityCompat.requestPermissions(
+                                    this,
+                                    new String[]{CAMERA},
+                                    REQUEST_MAKE_PHOTO);
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "Device don't have a camera", Toast.LENGTH_LONG).show();
+                }
+
+                break;
             default:
                 break;
         }
+    }
+
+
+    // Пытаемся сделать фото
+    private void makePhoto() {
+        Intent makePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (makePhotoIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(makePhotoIntent, REQUEST_MAKE_PHOTO);
+        } else   Toast.makeText(this, "No program for use camera", Toast.LENGTH_LONG).show();
+    }
+
+
+    // Диалог запроса разрешения, где юзер выбирает заправшивать разрешения или запускать настройки
+    private void showExplanationDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.use_camera_err)
+                // Запрос разрешиния
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ActivityCompat.requestPermissions(
+                                ReceiversActivity.this,
+                                new String[] {CAMERA},
+                                REQUEST_MAKE_PHOTO);
+                    }
+                })
+                // запуск окна с настройками программы через интент
+                .setNegativeButton(R.string.go_to_settings, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        openPermissionSettings();
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    // Запуск окна с настройками разрешения программы
+    private void openPermissionSettings() {
+        final Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        startActivity(intent);
+    }
+
+    // Метод принимает результат выбора разрешений юзером после вызова ActivityCompat.requestPermissions
+    // Проверяем было ли полученно разрешение при соответствующем запросе и выполняем процедуру
+    // в случае с положительным ответом и вновь вызываем диалог в случае если разрешения нет.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case REQUEST_MAKE_PHOTO:
+                if (grantResults[0] == PERMISSION_GRANTED) {
+                    makePhoto();
+                } else {
+                    // Если возвращается тут false то уже поставили галочку "не спрашивать"
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(ReceiversActivity.this, READ_CONTACTS )) {
+                        showSnackToSettingsOpen();
+                    }
+                }
+                break;
+        }
+    }
+
+    // Когда разрешения можно будет включит только через настройки бросаем этот тост
+    private void showSnackToSettingsOpen(){
+        Snackbar.make(ivLoadImage, R.string.permissions_not_granted, Snackbar.LENGTH_LONG)
+                .setAction(R.string.go_to_settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openPermissionSettings();
+                    }
+                })
+                .show();
     }
 
 
