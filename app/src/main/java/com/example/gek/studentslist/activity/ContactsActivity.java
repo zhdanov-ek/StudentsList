@@ -65,7 +65,6 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
         // Проверяем если разрешения на чтения книги
         if (ActivityCompat.checkSelfPermission(this, READ_CONTACTS) == PERMISSION_GRANTED) {
             // если есть то запускаем лоадер, читающий контакты
-            // todo Вероятно тут надо показывать прогресс бар
             loadContacts();
             fabAdd.setEnabled(true);
 
@@ -151,7 +150,6 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
         switch (requestCode){
             case READ_CONTACTS_REQUEST:
                 if (grantResults[0] == PERMISSION_GRANTED) {
-                    // todo Вероятно тут надо показывать прогресс бар
                     loadContacts();
                     fabAdd.setEnabled(true);
                 } else {

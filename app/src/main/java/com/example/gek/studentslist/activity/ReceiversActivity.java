@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -58,7 +60,6 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnLoadImage:
-                // todo сделать, что бы работало на АРI 23
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 if (photoPickerIntent.resolveActivity(getPackageManager()) != null){
@@ -67,8 +68,6 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
                 break;
 
             case R.id.btnMakePhoto:
-                //todo проверить пермишен на камеру и вообще сделать, что бы работало на АРI 23
-
                 // Проверяем есть ли вообще камера на устройстве
                 // Через PackageManager можно получить информацию о многих возможностях
                 PackageManager pm = getPackageManager();
@@ -94,7 +93,7 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
                         }
                     }
                 } else {
-                    Toast.makeText(this, "Device don't have a camera", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.no_camera, Toast.LENGTH_LONG).show();
                 }
 
                 break;
@@ -109,10 +108,30 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
         Intent makePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (makePhotoIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(makePhotoIntent, REQUEST_MAKE_PHOTO);
-        } else   Toast.makeText(this, "No program for use camera", Toast.LENGTH_LONG).show();
+        } else   Toast.makeText(this, R.string.no_soft_for_use_camera, Toast.LENGTH_LONG).show();
     }
 
 
+    // Обработка вызванных ранее интентов:
+    //   - запрос картинки из галереи возвращает URI
+    //   - запрос фото с камеры возвращает Bitmap
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null ) {
+            if (requestCode == REQUEST_LOAD_IMG ) {
+                Uri uriImage = data.getData();
+                ivLoadImage.setImageURI(uriImage);
+            } else if (requestCode == REQUEST_MAKE_PHOTO ) {
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                ivLoadImage.setImageBitmap(bitmap);
+            }
+        }
+
+    }
+
+
+    /** Пермишены на камеру */
     // Диалог запроса разрешения, где юзер выбирает заправшивать разрешения или запускать настройки
     private void showExplanationDialog() {
         new AlertDialog.Builder(this)
@@ -162,7 +181,7 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
                     makePhoto();
                 } else {
                     // Если возвращается тут false то уже поставили галочку "не спрашивать"
-                    if (!ActivityCompat.shouldShowRequestPermissionRationale(ReceiversActivity.this, READ_CONTACTS )) {
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(ReceiversActivity.this, CAMERA )) {
                         showSnackToSettingsOpen();
                     }
                 }
@@ -183,45 +202,6 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
     }
 
 
-    /** Intent с сылкой на фото в галерее возвращают оба наших интента, по этому
-     * обработка одинаковая и сводиться к тому, что нужно извлечь путь к файлу и подать
-     * его в метод загрузки картинки в ImageView
-    / */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && data != null ) {
-            String operation = "";
-            if (requestCode == REQUEST_LOAD_IMG ) {
-                operation = "Картинка загружена с галереи";
-            } else if (requestCode == REQUEST_MAKE_PHOTO ) {
-                operation = "Картинка загружена с камеры";
-            }
-            try {
-                // Получаем URI  файла с интента data
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-
-                // Получаем курсор
-                Cursor cursor = getContentResolver().query(selectedImage,
-                        filePathColumn, null, null, null);
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-
-                // Получаем абсолютный путь к файлу
-                String imgDecodableString = cursor.getString(columnIndex);
-                cursor.close();
-
-                // Загрузка киртинки
-                ivLoadImage.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
-                Toast.makeText(this, operation, Toast.LENGTH_LONG).show();
-            } catch (Exception e){
-                Toast.makeText(this, "Error " + e.toString(), Toast.LENGTH_LONG).show();
-            }
-        }
-
-    }
 
 }

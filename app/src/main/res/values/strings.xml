@@ -39,5 +39,7 @@
     <string name="read_contacts_err">Need permissions for read contacts!</string>
     <string name="use_camera_err">Need permissions for use camera</string>
     <string name="permissions_not_granted">Contacts permission is not granted</string>
+    <string name="no_soft_for_use_camera">No program for use camera</string>
+    <string name="no_camera">Device don't have a camera</string>
     <string name="go_to_settings">Settings</string>
 </resources>
