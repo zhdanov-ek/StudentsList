@@ -10,6 +10,7 @@ public class User {
 
     private String name;
     private String phone;
+    private String email;
     private Uri icon;
 
 
@@ -35,5 +36,13 @@ public class User {
 
     public void setIcon(Uri icon) {
         this.icon = icon;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

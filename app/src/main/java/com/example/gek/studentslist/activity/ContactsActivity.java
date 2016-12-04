@@ -38,6 +38,8 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
  * Добавление контакта в телефон через DialogFragment
  */
 
+//todo После добавления контакта на апи 23 прога упала, проверить все ли телефоны отображаются
+
 public class ContactsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<User>>{
     private static final int ID_LOADER_READ_PB = 55;
     private RecyclerView recyclerView;
@@ -59,6 +61,8 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
 
         recyclerView = (RecyclerView)findViewById(R.id.rvContacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
 
 
 
@@ -191,7 +195,7 @@ public class ContactsActivity extends AppCompatActivity implements LoaderManager
 
     // Когда разрешения можно будет включит только через настройки бросаем этот тост
     private void showSnackToSettingsOpen(){
-        Snackbar.make(recyclerView, R.string.permissions_not_granted, Snackbar.LENGTH_LONG)
+        Snackbar.make(recyclerView, R.string.permissions_for_contacts_not_granted, Snackbar.LENGTH_LONG)
                 .setAction(R.string.go_to_settings, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

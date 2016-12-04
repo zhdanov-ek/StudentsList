@@ -191,7 +191,7 @@ public class ReceiversActivity extends AppCompatActivity implements View.OnClick
 
     // Когда разрешения можно будет включит только через настройки бросаем этот тост
     private void showSnackToSettingsOpen(){
-        Snackbar.make(ivLoadImage, R.string.permissions_not_granted, Snackbar.LENGTH_LONG)
+        Snackbar.make(ivLoadImage, R.string.permissions_for_camera_not_granted, Snackbar.LENGTH_LONG)
                 .setAction(R.string.go_to_settings, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

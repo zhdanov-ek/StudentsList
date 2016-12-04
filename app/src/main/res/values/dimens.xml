@@ -26,4 +26,5 @@
 
     <!-- ContactsActivity -->
     <dimen name="icon_size">50dp</dimen>
+    <dimen name="small_icon_size">15dp</dimen>
 </resources>

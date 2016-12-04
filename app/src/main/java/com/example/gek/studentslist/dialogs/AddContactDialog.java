@@ -38,6 +38,8 @@ public class AddContactDialog extends DialogFragment implements View.OnClickList
         etName = (EditText)v.findViewById(R.id.etName);
         etPhone = (EditText)v.findViewById(R.id.etPhone);
         return v;
+
+        //todo Сделать нормальный дизайн окна для АПИ 23
     }
 
     @Override

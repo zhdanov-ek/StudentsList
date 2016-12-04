@@ -19,7 +19,10 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
 
     private TextView tvName;
     private TextView tvPhone;
+    private TextView tvEmail;
     private ImageView ivIcon;
+    private ImageView ivPhone;
+    private ImageView ivEmail;
 
     private final CircleTransformation circleTransformation = new CircleTransformation();
 
@@ -31,12 +34,27 @@ public class ContactViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         tvName = (TextView) itemView.findViewById(R.id.tvContactName);
         tvPhone = (TextView) itemView.findViewById(R.id.tvContactPhone);
+        tvEmail = (TextView) itemView.findViewById(R.id.tvContactEmail);
         ivIcon = (ImageView) itemView.findViewById(R.id.ivIcon);
+        ivPhone = (ImageView) itemView.findViewById(R.id.ivPhone);
+        ivEmail = (ImageView) itemView.findViewById(R.id.ivEmail);
+
     }
 
     void bind(User user) {
         tvName.setText(user.getName());
         tvPhone.setText(user.getPhone());
+        if (tvPhone.getText().toString().isEmpty()){
+            tvPhone.setVisibility(View.GONE);
+            ivPhone.setVisibility(View.GONE);
+        }
+
+        tvEmail.setText(user.getEmail());
+        if (tvEmail.getText().toString().isEmpty()){
+            tvEmail.setVisibility(View.GONE);
+            ivEmail.setVisibility(View.GONE);
+        }
+
 
         Picasso.with(ivIcon.getContext())
                 .load(user.getIcon())
