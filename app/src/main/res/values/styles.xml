@@ -9,6 +9,13 @@
         <item name="android:dialogTheme">@style/CustomDialog</item>
     </style>
 
+    <style name="AppThemeNoAB" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorGit</item>
+        <item name="colorPrimaryDark">@color/colorGoogle</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:dialogTheme">@style/CustomDialog</item>
+    </style>
+
 
     <style name="ButtonGit" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/bg_button_git</item>

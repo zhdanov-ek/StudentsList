@@ -27,6 +27,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:name=".data.App"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.MainActivity">
             <intent-filter>
@@ -35,9 +36,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".activity.ListViewActivity" />
-        <activity android:name=".activity.RecyclerViewActivity" />
+
+        <activity android:name=".activity.RecyclerViewActivity"
+            android:theme="@style/AppThemeNoAB"/>
+
         <activity android:name=".activity.ContactsActivity"/>
+
         <activity
             android:name=".activity.PersonActivity"
             android:screenOrientation="portrait">
