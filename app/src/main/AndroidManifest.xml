@@ -37,12 +37,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.ListViewActivity" />
+        <activity android:name=".activity.ListViewActivity"
+            android:label="@string/title_list_view"/>
 
         <activity android:name=".activity.RecyclerViewActivity"
             android:theme="@style/AppThemeNoAB"/>
 
-        <activity android:name=".activity.ContactsActivity"/>
+        <activity android:name=".activity.ContactsActivity"
+            android:label="@string/title_activity_contacts"/>
 
         <activity
             android:name=".activity.PersonActivity"
@@ -70,6 +72,7 @@
 
         <activity
             android:name=".activity.ReceiversActivity"
+            android:label="@string/title_activity_receivers"
             android:screenOrientation="portrait">
         </activity>
 

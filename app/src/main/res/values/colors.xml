@@ -12,4 +12,14 @@
     <color name="colorGitDark">#403f3f</color>
     <color name="colorGitLight">#c7c5c5</color>
     <color name="colorBase">#FFFFFF</color>
+
+    <color name="colorFrameLayout">#ffb74d</color>
+    <color name="colorFrameLayoutPress">#ff9800</color>
+    <color name="colorBackgroundLayout">@null</color>
+    <color name="colorBackgroundLayoutPress">#f9d39c</color>
+
+
+    <color name="colorYellow">#ffd54f</color>
+    <color name="colorDarkYellow">#ffc107</color>
+    <color name="colorLightYellow">#ffecb3</color>
 </resources>

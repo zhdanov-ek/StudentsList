@@ -10,8 +10,8 @@
     </style>
 
     <style name="AppThemeNoAB" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorGit</item>
-        <item name="colorPrimaryDark">@color/colorGoogle</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:dialogTheme">@style/CustomDialog</item>
     </style>
@@ -31,6 +31,24 @@
         <item name="android:textSize">20sp</item>
         <item name="android:padding">5dp</item>
 
+    </style>
+
+    <style name="ButtonYellow" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/bg_button_yellow</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">2dp</item>
+
+    </style>
+
+    <style name="MyLayout">
+        <item name="android:background">@drawable/bg_layout</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:layout_margin">@dimen/ll_margin</item>
+        <item name="android:paddingTop">@dimen/ll_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/ll_padding_vertical</item>
+        <item name="android:paddingLeft">@dimen/ll_padding_horizont</item>
+        <item name="android:paddingRight">@dimen/ll_padding_horizont</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

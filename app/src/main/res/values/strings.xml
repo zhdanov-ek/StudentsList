@@ -2,7 +2,7 @@
     <string name="app_name">GH16-Zhdanov-Lists</string>
     <string name="no_internet">No internet connection!</string>
     <string name="title_list_view">Show ListView</string>
-    <string name="title_recylcer_view">Show RecycleView</string>
+    <string name="title_recylcer_view">Show RecycleView (Realm)</string>
     <string name="button_git">GIT</string>
     <string name="title_activity_person_google_plus">PersonGooglePlusActivity</string>
     <string name="button_ok">OK</string>

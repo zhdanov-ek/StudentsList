@@ -8,6 +8,7 @@ import com.example.gek.studentslist.data.*;
 import com.example.gek.studentslist.adapters.*;
 import com.example.gek.studentslist.R;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
@@ -24,26 +25,29 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 
 public class RecyclerViewActivity extends AppCompatActivity {
     private Realm realm;
     private final static String TAG = "1111";
+    private RecyclerView recyclerView;
+    private RealmResults<Student> students;
+    private Context ctx;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view);
 
+        ctx = getBaseContext();
+
         // Добавляем тулбар бар
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         myToolbar.setTitle(R.string.title_recylcer_view);
         setSupportActionBar(myToolbar);
 
-        DataStudents dataStudents = new DataStudents();
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-
-
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
 
         // Задаем стандартный менеджер макетов
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -53,9 +57,11 @@ public class RecyclerViewActivity extends AppCompatActivity {
         realm = Realm.getDefaultInstance();
 
         // Получаем список всех объектов Student. По сути это ссылки на объекты в БД
-        RealmResults<Student> students = realm.where(Student.class).findAll();
+        students = realm
+                .where(Student.class)
+                .findAllSorted("name", Sort.ASCENDING);
 
-        if ((students != null) && (students.size() > 0)){
+        if (students.size() > 0){
             Log.i(TAG, "Student list FINDED! ");
             for (Student s: students){
                 Log.i(TAG, "Student: " + s.getName());
@@ -66,14 +72,21 @@ public class RecyclerViewActivity extends AppCompatActivity {
                 for (Student s: students){
                     Log.i(TAG, "Student: " + s.getName());
                 }
+                students = realm
+                        .where(Student.class)
+                        .findAllSorted("name", Sort.ASCENDING);
             }
         }
 
         // Создаем адаптер
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, dataStudents.getListStudents());
-        recyclerView.setAdapter(adapter);
+        if (students.size() > 0){
+            RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, students);
+            recyclerView.setAdapter(adapter);
+        }
+
     }
 
+    /** Загрузка записей в реалм. Выполняется один раз при первом запуске программы */
     private Boolean loadStudentsToRealm(){
         DataStudents dataStudents = new DataStudents();
         List<Student> students = dataStudents.getListStudents();
@@ -88,19 +101,27 @@ public class RecyclerViewActivity extends AppCompatActivity {
         }
     }
 
+    /** Возвращает список студентов по маске поиска */
+    private RealmResults<Student> searchUser(String name){
+        Realm realm = Realm.getDefaultInstance();
+
+        RealmResults<Student> searchUsers = realm
+                .where(Student.class)
+                .contains("searchName", name.toLowerCase())
+                .findAllSorted("searchName", Sort.ASCENDING);
+        realm.close();
+        return searchUsers;
+    }
+
     // Указываем как нам формировать меню и описываем виджет SearchView
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.search_menu, menu);
-
         MenuItem searchItem = menu.findItem(R.id.ab_search);
-
         SearchView searchView =(SearchView) MenuItemCompat.getActionView(searchItem);
 
         // Отрабатываем смену текста в окне поиска
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            // Реакция на команду ввода (Enter)
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -109,32 +130,22 @@ public class RecyclerViewActivity extends AppCompatActivity {
             // в окне поиска
             @Override
             public boolean onQueryTextChange(String newText) {
-                // Делаем выборку из БД после чего проверяем есть ли результат. Если нет то
-                // делаем выборку всех слов
                 Log.i(TAG, "onQueryTextChange: " + newText);
-//                Cursor cursor = db.getAllData(Consts.LIST_TYPE_SEARCH, Consts.ORDER_BY_ABC, newText);
-//                if ((cursor == null) || (cursor.getCount() == 0)) {
-//                    cursor = db.getAllData(Consts.LIST_TYPE_ALL, Consts.ORDER_BY_ABC, null);
-//                }
-//                mListWords = db.getFullListWords(cursor);
-//                mAdapter = new RecyclerViewAdapter((Activity)mCtx, mListWords);
-//                mRrecyclerView.setAdapter(mAdapter);
+                students = searchUser(newText);
+                RecyclerViewAdapter rva = new RecyclerViewAdapter(ctx, students);
+                recyclerView.setAdapter(rva);
                 return false;
             }
         });
 
-
-        // Событие срабатывает по второму нажатию на крестик, т.е. закрытию окна поиска.
-        // Первое нажатие очищает окно ввода и фактически срабатывает onQueryTextChange с пустой строкой
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                Log.i(TAG, "onClose: Close search Widget");
-                return false;
-            }
-        });
         return true;
     }
 
+
+    @Override
+    protected void onDestroy() {
+        realm.close();
+        super.onDestroy();
+    }
 
 }

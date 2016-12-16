@@ -20,13 +20,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
 
+import io.realm.RealmResults;
+
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>  {
-    private ArrayList<Student> students;
+    private RealmResults<Student> students;
     private Context ctx;
 
     // На вход конструктору адаптера подаем контекст для запуска активити и список студентов
-    public RecyclerViewAdapter(Context ctx, ArrayList<Student> students){
+    public RecyclerViewAdapter(Context ctx,  RealmResults<Student> students){
         this.ctx = ctx;
         this.students = students;
     }

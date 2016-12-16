@@ -4,8 +4,9 @@
     android:id="@+id/llItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:orientation="horizontal">
+
+    android:orientation="horizontal"
+    style="@style/MyLayout">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,15 +26,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="200"
+        android:layout_weight="150"
         android:gravity="center_vertical|center_horizontal">
 
         <Button
             android:id="@+id/btnGit"
-            android:layout_width="@dimen/button_width"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/button_item_width"
+            android:layout_height="@dimen/button_item_height"
             android:text="@string/button_git"
-            android:textColor="@color/blue" />
+            style="@style/ButtonYellow" />
     </LinearLayout>
 
 

@@ -12,6 +12,7 @@ public class Student extends RealmObject{
 
     @PrimaryKey
     private String name;
+    private String searchName;
     private String googlePlus;
     private String git;
 
@@ -19,6 +20,7 @@ public class Student extends RealmObject{
 
     public Student(String name, String git, String googlePlus){
         this.name = name;
+        this.searchName = name.toLowerCase();
         this.googlePlus = googlePlus;
         this.git = git;
     }
@@ -29,6 +31,14 @@ public class Student extends RealmObject{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSearchName() {
+        return searchName;
+    }
+
+    public void setSearchName(String searchName) {
+        this.searchName = searchName;
     }
 
     public String getGooglePlus() {

@@ -23,8 +23,18 @@
     <dimen name="button_more_height">30dp</dimen>
     <dimen name="button_more_width">200dp</dimen>
 
+    <!-- Button item -->
+    <dimen name="button_item_height">36dp</dimen>
+    <dimen name="button_item_width">100dp</dimen>
+
 
     <!-- ContactsActivity -->
     <dimen name="icon_size">50dp</dimen>
     <dimen name="small_icon_size">15dp</dimen>
+
+    <!-- Frame -->
+    <dimen name="ll_padding_horizont">10dp</dimen>
+    <dimen name="ll_padding_vertical">1dp</dimen>
+    <dimen name="ll_margin">2dp</dimen>
+
 </resources>

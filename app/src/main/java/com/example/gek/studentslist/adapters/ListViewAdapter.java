@@ -66,6 +66,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView tvName = (TextView) view.findViewById(R.id.tvName);
         tvName.setText(student.getName());
         LinearLayout llItem = (LinearLayout) view.findViewById(R.id.llItem);
+
         llItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
